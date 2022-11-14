@@ -3,10 +3,11 @@ using System.Collections.Generic;
 
 namespace Nano
 {
-    public class ServerPrint{
+    public class ServerPrint : INetMessage
+    {
         public string content;
     }
-    public class StartGame
+    public class StartGame : INetMessage
     {
         //null if load save
         public int MapRow, MapCol;
@@ -17,45 +18,45 @@ namespace Nano
     }
 
     //unit
-    public class Upgrade
+    public class Upgrade : INetMessage
     {
         public string ID;
     }
 
-    public class Interact
+    public class Interact : INetMessage
     {
         public string From, To;
     }
 
-    class Move
+    class Move : INetMessage
     {
         public string ID;
         public int Row, Col;
     }
 
-    class SetRelic
+    class SetRelic : INetMessage
     {
         public string ID;
         public string Relic;//null for remove
     }
 
-    class AddBuilding
+    class AddBuilding : INetMessage
     {
         public BuildingType Type;
         public int Row, Col;
     }
 
-    class EndRound
+    class EndRound : INetMessage
     {
 
     }
 
-    class SaveGame
+    class SaveGame : INetMessage
     {
         public string Name;
     }
 
-    class Quit
+    class Quit : INetMessage
     {
 
     }

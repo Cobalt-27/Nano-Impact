@@ -3,7 +3,6 @@ using System.Collections.Generic;
 
 namespace Nano
 {
-
     public class NetUnit
     {
         // int row, col, strength, defence, life, range, exp, element, level;
@@ -32,29 +31,29 @@ namespace Nano
     {
         public RelicType Type;
     }
-    public class EndGame
+    public class EndGame : INetMessage
     {
         public bool Win;
     }
-    public class SetMap
+    public class SetMap : INetMessage
     {
         public int Row, Col;
         public NetBlock[] Blocks;
     }
-    public class SetUnits
+    public class SetUnits : INetMessage
     {
         public NetUnit[] Units;
     }
-    public class SetRelics
+    public class SetRelics : INetMessage
     {
         public NetRelic[] Relics;
     }
-    public class SetBuildings
+    public class SetBuildings : INetMessage
     {
         public NetBuilding[] Buildings;
     }
 
-    public class Log
+    public class Log : INetMessage
     {
         public string content;
     }

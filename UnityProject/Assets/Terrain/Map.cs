@@ -43,27 +43,39 @@ namespace Nano
             // Generate(args);
         }
 
-        public void NetUpdate(SetMap e)
-        {
-            Generate(e);
-        }
-
         // Update is called once per frame
         void Update()
         {
 
         }
 
-        public void Generate(SetMap args)
-        {
 
-            BlockSet = new Block[args.Row,args.Col];
-            foreach(var b in args.Blocks){
-                BlockSet[b.Row,b.Col]=CreateBlock(Type2Prefab(b.Type), b.Row, b.Col, b.Height);
+        public Vector3 GetPosition(int row, int col, float height)
+        {
+            float sqrt3 = (float)System.Math.Sqrt(3);
+            float colShift = row % 2 == 0 ? 0 : UnitLength * 1.5f;
+            return new Vector3(sqrt3 * UnitLength * row / 2, height, col * UnitLength * 3 + colShift);
+        }
+
+        public void NetUpdate(SetMap args)
+        {
+            Clear();
+            BlockSet = new Block[args.Row, args.Col];
+            foreach (var b in args.Blocks)
+            {
+                BlockSet[b.Row, b.Col] = CreateBlock(Type2Prefab(b.Type), b.Row, b.Col, b.Height);
             }
         }
 
-        public Block CreateBlock(GameObject prefab, int row, int col, float height)
+        private void Clear()
+        {
+            foreach (Transform child in gameObject.transform)
+            {
+                Destroy(child.gameObject);
+            }
+        }
+
+        private Block CreateBlock(GameObject prefab, int row, int col, float height)
         {
             var instance = Instantiate(prefab, GetPosition(row, col, height), Quaternion.identity);
             instance.transform.SetParent(gameObject.transform);
@@ -89,13 +101,6 @@ namespace Nano
             BlockType.Empty => new GameObject("EmptyBlock"),
             _ => throw new System.NotImplementedException(),
         };
-
-        private Vector3 GetPosition(int row, int col, float height)
-        {
-            float sqrt3 = (float)System.Math.Sqrt(3);
-            float colShift = row % 2 == 0 ? 0 : UnitLength * 1.5f;
-            return new Vector3(sqrt3 * UnitLength * row / 2, height, col * UnitLength * 3 + colShift);
-        }
 
 
     }

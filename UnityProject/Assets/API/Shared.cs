@@ -4,10 +4,16 @@ using UnityEngine;
 
 namespace Nano
 {
-    public enum Character{
+    public interface INetMessage
+    {
+
+    }
+    public enum Character
+    {
         Nahida, Amber
     }
-    public enum UnitType{
+    public enum UnitType
+    {
         Melee, Range, Heal
     }
     public enum BlockType

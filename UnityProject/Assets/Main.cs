@@ -9,11 +9,15 @@ namespace Nano
 {
     public class Main : MonoBehaviour
     {
+        public static Main Instance{get;private set;}
         private WebSocket ws;
+        [SerializeField]
+        private Dispatcher dispatcher;
         // Start is called before the first frame update
         void Start()
         {
             NetInit("localhost", 7777);
+            Instance=this;
         }
 
         private void NetInit(string ip, int port)
@@ -21,6 +25,7 @@ namespace Nano
             ws = new WebSocket($"ws://{ip}:{port}");
             ws.Connect();
             ws.OnMessage += (sender, e) => NetHandle(e.Data);
+            print($"connected to {ip} {port}");
         }
 
         void NetHandle(string raw)
@@ -31,6 +36,7 @@ namespace Nano
             string data=raw.Substring(idx+1);
             print($"@ {type}");
             print($"> {data}");
+            dispatcher.Dispatch(type,data);
         }
 
         void NetSend<T>(T data){
