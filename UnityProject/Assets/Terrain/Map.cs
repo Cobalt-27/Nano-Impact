@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 namespace Nano
 {
     public class Map : MonoBehaviour
@@ -42,10 +43,10 @@ namespace Nano
             // Generate(args);
         }
 
-        // public override void Set(SetMap e)
-        // {
-        //     Generate(args);
-        // }
+        public void NetUpdate(SetMap e)
+        {
+            Generate(e);
+        }
 
         // Update is called once per frame
         void Update()
@@ -53,18 +54,14 @@ namespace Nano
 
         }
 
-        // public void Generate(TerrainCreateArgs args)
-        // {
-        //     BlockSet = new Block[args.Types.GetLength(0), args.Types.GetLength(1)];
-        //     Debug.Assert(args.Types.GetLength(0) == args.Height.GetLength(0) && args.Types.GetLength(1) == args.Height.GetLength(1));
-        //     for (int i = 0; i < args.Types.GetLength(0); i++)
-        //     {
-        //         for (int j = 0; j < args.Types.GetLength(1); j++)
-        //         {
-        //             BlockSet[i, j] = CreateBlock(Type2Prefab(args.Types[i, j]), i, j, args.Height[i, j]);
-        //         }
-        //     }
-        // }
+        public void Generate(SetMap args)
+        {
+
+            BlockSet = new Block[args.Row,args.Col];
+            foreach(var b in args.Blocks){
+                BlockSet[b.Row,b.Col]=CreateBlock(Type2Prefab(b.Type), b.Row, b.Col, b.Height);
+            }
+        }
 
         public Block CreateBlock(GameObject prefab, int row, int col, float height)
         {
