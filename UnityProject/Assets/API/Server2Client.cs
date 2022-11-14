@@ -19,6 +19,7 @@ namespace Nano
     public class NetBlock
     {
         public int Row, Col;
+        public float Height;
         public BlockType Type;
     }
     public class NetBuilding
@@ -38,8 +39,7 @@ namespace Nano
     public class SetMap
     {
         public int Row, Col;
-        public NetBlock[] Blocks;//flattened
-        public float[] Heights;//flattened
+        public NetBlock[] Blocks;
     }
     public class SetUnits
     {
