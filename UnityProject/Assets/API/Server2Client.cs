@@ -59,8 +59,4 @@ namespace Nano
         public string content;
     }
     //not used
-    public class Invoke
-    {
-        public string data;
-    }
 }

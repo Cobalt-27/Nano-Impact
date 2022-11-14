@@ -3,7 +3,9 @@ using System.Collections.Generic;
 
 namespace Nano
 {
-
+    public class ServerPrint{
+        public string content;
+    }
     public class StartGame
     {
         //null if load save
