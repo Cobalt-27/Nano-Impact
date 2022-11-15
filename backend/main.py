@@ -1,8 +1,7 @@
-import websockets
 import json
-import asyncio
 import websockets
-
+import asyncio
+import random
 
 async def send(ws, type: str, data: str):
     print('>', type, data)
@@ -19,12 +18,29 @@ async def nethandle(websocket, path):
         print('<',data)
         await handle(websocket, type, data)
 
+def genmap(row,col)->dict:
+    m={}
+    m['Row']=row
+    m['Col']=col
+    m['Blocks']=[]
+    for i in range(row):
+        for j in range(col):
+            b={}
+            b['Row']=i
+            b['Col']=j
+            b['Height']=random.random()
+            b['Type']=random.randint(0,4)
+            m['Blocks'].append(b)
+    return m
 
 async def handle(ws, type, data):
-    testdata = {
-        'attribute0': 20,
-    }
-    await send(ws, 'test', json.dumps(testdata))
+    if type=='NetStartGame':
+        await send(ws,'ServerSetMap',json.dumps(genmap(20,10)))
+    # testdata = {
+    #     'attribute0': 20,
+    # }
+    # await send(ws, 'test', json.dumps(testdata))
+
 
 if __name__ == '__main__':
     ip = 'localhost'
@@ -35,3 +51,9 @@ if __name__ == '__main__':
     loop.run_until_complete(
         websockets.serve(nethandle, ip, port))
     loop.run_forever()
+
+
+
+
+            
+    

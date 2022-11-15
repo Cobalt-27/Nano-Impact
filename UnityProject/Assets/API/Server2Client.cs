@@ -6,6 +6,7 @@ namespace Nano
     public class NetUnit
     {
         // int row, col, strength, defence, life, range, exp, element, level;
+        public string ID;
         public Character Character;
         public UnitType Type;
         public int Row, Col;
@@ -23,37 +24,39 @@ namespace Nano
     }
     public class NetBuilding
     {
+        public string ID;
         public int Row, Col;
         public BuildingType Type;
         public Faction Faction;
     }
     public class NetRelic
     {
+        public string ID;
         public RelicType Type;
     }
-    public class EndGame : INetMessage
+    public class ServerEndGame : INetMessage
     {
         public bool Win;
     }
-    public class SetMap : INetMessage
+    public class ServerSetMap : INetMessage
     {
         public int Row, Col;
         public NetBlock[] Blocks;
     }
-    public class SetUnits : INetMessage
+    public class ServerSetUnits : INetMessage
     {
         public NetUnit[] Units;
     }
-    public class SetRelics : INetMessage
+    public class ServerSetRelics : INetMessage
     {
         public NetRelic[] Relics;
     }
-    public class SetBuildings : INetMessage
+    public class ServerSetBuildings : INetMessage
     {
         public NetBuilding[] Buildings;
     }
 
-    public class Log : INetMessage
+    public class ClientPrint : INetMessage
     {
         public string content;
     }

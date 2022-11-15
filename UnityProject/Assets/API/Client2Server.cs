@@ -7,7 +7,7 @@ namespace Nano
     {
         public string content;
     }
-    public class StartGame : INetMessage
+    public class NetStartGame : INetMessage
     {
         //null if load save
         public int MapRow, MapCol;
@@ -18,45 +18,45 @@ namespace Nano
     }
 
     //unit
-    public class Upgrade : INetMessage
+    public class NetUpgrade : INetMessage
     {
         public string ID;
     }
 
-    public class Interact : INetMessage
+    public class NetInteract : INetMessage
     {
         public string From, To;
     }
 
-    class Move : INetMessage
+    class NetMove : INetMessage
     {
         public string ID;
         public int Row, Col;
     }
 
-    class SetRelic : INetMessage
+    class NetAssignRelic : INetMessage
     {
         public string ID;
         public string Relic;//null for remove
     }
 
-    class AddBuilding : INetMessage
+    class NetAddBuilding : INetMessage
     {
         public BuildingType Type;
         public int Row, Col;
     }
 
-    class EndRound : INetMessage
+    class NetEndRound : INetMessage
     {
 
     }
 
-    class SaveGame : INetMessage
+    class NetSave : INetMessage
     {
         public string Name;
     }
 
-    class Quit : INetMessage
+    class NetQuit : INetMessage
     {
 
     }

@@ -6,7 +6,7 @@ namespace Nano
 {
     public class Map : MonoBehaviour
     {
-        public Block[,] BlockSet;
+        public Block[,] BlockSet=new Block[0,0];
         [SerializeField]
         private GameObject plainPrefab;
         [SerializeField]
@@ -17,6 +17,7 @@ namespace Nano
         private GameObject desertPrefab;
         private GameObject emptyPrefab;
 
+        public float f=10;
 
         public int RowCount
         {
@@ -31,22 +32,34 @@ namespace Nano
         // Start is called before the first frame update
         void Start()
         {
-            // TerrainCreateArgs args=new();
-            // args.Types=new BlockType[40,20];
-            // args.Height=new float[40,20];
-            // for(int i=0;i<40;i++){
-            //     for(int j=0;j<20;j++){
-            //         args.Types[i,j]=(BlockType)Random.Range(0,4);
-            //         args.Height[i,j]=Random.Range(0,0.3f);
-            //     }
-            // }
-            // Generate(args);
+            emptyPrefab=new GameObject();
+        }
+
+        public void TestNetUpdate()
+        {
+            ServerSetMap args = new();
+            args.Blocks = new NetBlock[40 * 20];
+            args.Row = 40;
+            args.Col = 20;
+            for (int i = 0; i < 40; i++)
+            {
+                for (int j = 0; j < 20; j++)
+                {
+                    args.Blocks[i * 20 + j] = new NetBlock
+                    {
+                        Row = i,
+                        Col = j,
+                        Type = (BlockType)Random.Range(0, 5),
+                    };
+                }
+            }
+            NetUpdate(args);
         }
 
         // Update is called once per frame
         void Update()
         {
-
+            
         }
 
 
@@ -57,7 +70,7 @@ namespace Nano
             return new Vector3(sqrt3 * UnitLength * row / 2, height, col * UnitLength * 3 + colShift);
         }
 
-        public void NetUpdate(SetMap args)
+        public void NetUpdate(ServerSetMap args)
         {
             Clear();
             BlockSet = new Block[args.Row, args.Col];
@@ -80,14 +93,6 @@ namespace Nano
             var instance = Instantiate(prefab, GetPosition(row, col, height), Quaternion.identity);
             instance.transform.SetParent(gameObject.transform);
             var block = instance.AddComponent<Block>();
-            foreach (Transform child in instance.transform)
-            {
-                var obj = child.gameObject;
-                var mesh = obj.GetComponent<MeshFilter>().sharedMesh;
-                obj.AddComponent<MeshCollider>().sharedMesh = mesh;
-                var listener = obj.AddComponent<MouseListener>();
-                listener.Init(block.onClick);
-            }
             block.Init(row, col);
             return block;
         }
@@ -98,7 +103,7 @@ namespace Nano
             BlockType.Hills => hillsPrefab,
             BlockType.Mountains => mountainsPrefab,
             BlockType.Desert => desertPrefab,
-            BlockType.Empty => new GameObject("EmptyBlock"),
+            BlockType.Empty => emptyPrefab,
             _ => throw new System.NotImplementedException(),
         };
 

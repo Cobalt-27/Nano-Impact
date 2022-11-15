@@ -11,7 +11,14 @@ namespace Nano
         // Start is called before the first frame update
         void Start()
         {
-
+            foreach (Transform child in gameObject.transform)
+            {
+                var obj = child.gameObject;
+                var mesh = obj.GetComponent<MeshFilter>().sharedMesh;
+                obj.AddComponent<MeshCollider>().sharedMesh = mesh;
+                var listener = obj.AddComponent<MouseListener>();
+                listener.Init(onClick);
+            }
         }
 
         public void Init(int row, int col)

@@ -1132,7 +1132,7 @@ GameObject:
   - component: {fileID: 887749182}
   m_Layer: 0
   m_Name: Map
-  m_TagString: Untagged
+  m_TagString: Map
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1172,6 +1172,7 @@ MonoBehaviour:
     type: 3}
   desertPrefab: {fileID: 919132149155446097, guid: 208e8d5854aca22428781abbdb08b90b,
     type: 3}
+  f: 10
   UnitLength: 1.3
 --- !u!1 &1034978060
 GameObject:
@@ -2248,8 +2249,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1995684079}
   - component: {fileID: 1995684078}
+  - component: {fileID: 1995684080}
   m_Layer: 0
-  m_Name: Controller
+  m_Name: Main
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2282,6 +2284,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1995684080
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1995684077}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6fd457f210081884591798c57b2f894d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Map: {fileID: 887749179}
 --- !u!1 &2007361415
 GameObject:
   m_ObjectHideFlags: 0

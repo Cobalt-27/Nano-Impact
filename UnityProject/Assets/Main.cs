@@ -12,31 +12,28 @@ namespace Nano
         public static Main Instance{get;private set;}
         private WebSocket ws;
         [SerializeField]
-        private Dispatcher dispatcher;
+        private NetHandler handler;
         // Start is called before the first frame update
         void Start()
         {
             NetInit("localhost", 7777);
             Instance=this;
+            NetSend(new NetStartGame());
         }
 
         private void NetInit(string ip, int port)
         {
             ws = new WebSocket($"ws://{ip}:{port}");
             ws.Connect();
-            ws.OnMessage += (sender, e) => NetHandle(e.Data);
+            ws.OnMessage += (sender, e) => NetReceive(e.Data);
             print($"connected to {ip} {port}");
         }
 
-        void NetHandle(string raw)
-        {
-            // print($"> {raw}");
-            int idx=raw.IndexOf('@');
-            string type=raw.Substring(0,idx);
-            string data=raw.Substring(idx+1);
-            print($"@ {type}");
-            print($"> {data}");
-            dispatcher.Dispatch(type,data);
+        void NetReceive(string raw)
+        {     
+            lock(handler.MessageList){
+                handler.MessageList.Add(raw);
+            }
         }
 
         void NetSend<T>(T data){
