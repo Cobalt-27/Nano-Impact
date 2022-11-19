@@ -9,7 +9,7 @@ namespace Nano
     public class NetHandler : MonoBehaviour
     {
         [SerializeField]
-        private GameObject mapPrefab;
+        private GameObject mapInstance;
         [SerializeField]
         private GameObject unitPrefab;
         [SerializeField]
@@ -46,7 +46,7 @@ namespace Nano
             switch (name)
             {
                 case "ServerSetMap":
-                    mapPrefab.GetComponent<Map>().NetUpdate(To<ServerSetMap>(json));
+                    mapInstance.GetComponent<Map>().NetUpdate(To<ServerSetMap>(json));
                     break;
                 case "ServerSetUnits":
                     
