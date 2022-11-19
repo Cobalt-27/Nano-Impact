@@ -2297,7 +2297,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6fd457f210081884591798c57b2f894d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Map: {fileID: 887749179}
+  mapInstance: {fileID: 887749179}
+  unitPrefab: {fileID: 0}
+  relicPrefab: {fileID: 0}
+  buildingPrefab: {fileID: 0}
   MessageList: []
 --- !u!1 &2007361415
 GameObject:
