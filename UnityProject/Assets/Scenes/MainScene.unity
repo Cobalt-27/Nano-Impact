@@ -2269,7 +2269,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d3dfc27ebfa59e4bbf017922cf2e7fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  handler: {fileID: 0}
+  handler: {fileID: 1995684080}
 --- !u!4 &1995684079
 Transform:
   m_ObjectHideFlags: 0

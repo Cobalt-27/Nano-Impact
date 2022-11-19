@@ -7,22 +7,27 @@ namespace Nano
     public class AutoMove : MonoBehaviour
     {
         [SerializeField]
-        private float speed=0.05f;
+        private float speed = 0.05f;
         [SerializeField]
-        private int lifeSpan=600;
+        private int lifeSpan = 600;
+        public bool Enabled = true;
         // Start is called before the first frame update
         void Start()
         {
-        
+
         }
 
         // Update is called once per frame
         void FixedUpdate()
         {
-            gameObject.transform.Translate(new Vector3(0,0,speed));
-            lifeSpan--;
-            if(lifeSpan<=0){
-                Destroy(gameObject);
+            if (Enabled)
+            {
+                gameObject.transform.Translate(new Vector3(0, 0, speed));
+                lifeSpan--;
+                if (lifeSpan <= 0)
+                {
+                    Destroy(gameObject);
+                }
             }
         }
     }

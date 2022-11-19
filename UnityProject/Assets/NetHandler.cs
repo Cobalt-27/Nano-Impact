@@ -9,7 +9,13 @@ namespace Nano
     public class NetHandler : MonoBehaviour
     {
         [SerializeField]
-        private GameObject Map;
+        private GameObject mapPrefab;
+        [SerializeField]
+        private GameObject unitPrefab;
+        [SerializeField]
+        private GameObject relicPrefab;
+        [SerializeField]
+        private GameObject buildingPrefab;
         public List<string> MessageList;
         // Start is called before the first frame update
         void Start()
@@ -40,10 +46,10 @@ namespace Nano
             switch (name)
             {
                 case "ServerSetMap":
-                    Map.GetComponent<Map>().NetUpdate(To<ServerSetMap>(json));
+                    mapPrefab.GetComponent<Map>().NetUpdate(To<ServerSetMap>(json));
                     break;
                 case "ServerSetUnits":
-
+                    
                     break;
                 case "ServerSetRelics":
                     break;
@@ -66,20 +72,43 @@ namespace Nano
             objList.Where(o => !except.Contains(o.name)).ToList().ForEach(o => Destroy(o));
         }
 
-
-        private void HandleSetUnits(ServerSetUnits args)
-        {
-            Remove("Unit", args.Units.Select(u => u.ID));
+        private IEnumerable<GameObject> CreateIfNeeded(string tag,IEnumerable<string> names,GameObject prefab){
+            var inited=new List<GameObject>();
+            var objList = GameObject.FindGameObjectsWithTag(tag).ToList();
+            var toInit=names.Except(names);
+            foreach(var name in toInit){
+                var o=Instantiate(prefab,Vector3.zero,Quaternion.identity);
+                o.name=name;
+                inited.Add(o);
+            }
+            return inited;
         }
-        private void HandleSetRelics(ServerSetRelics args)
+
+        private void OnSetUnits(ServerSetUnits args)
         {
-            Remove("Relic", args.Relics.Select(u => u.ID));
+            var tag="Unit";
+            var names=args.Units.Select(u => u.ID);
+            Remove(tag, names);
+            CreateIfNeeded(tag, names,unitPrefab);
+            
+            // var toInit=
+        }
+        private void OnSetRelics(ServerSetRelics args)
+        {
+            var tag="Relic";
+            var names=args.Relics.Select(u => u.ID);
+            Remove(tag, names);
+            CreateIfNeeded(tag,names,relicPrefab);
+            
             // Clean("Relic",netRelics.Select(r=>r.ID));
         }
 
-        private void HandleSetBuildings(ServerSetBuildings args)
+        private void OnSetBuildings(ServerSetBuildings args)
         {
-            Remove("Building", args.Buildings.Select(u => u.ID));
+            var tag="Building";
+            var names=args.Buildings.Select(u => u.ID);
+            Remove(tag, names);
+            CreateIfNeeded(tag,names,buildingPrefab);
             // Clean("Building",netBuildings.Select(b=>b.ID));
         }
     }

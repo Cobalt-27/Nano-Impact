@@ -30,7 +30,7 @@ namespace Nano
         }
 
         void NetReceive(string raw)
-        {     
+        {    
             lock(handler.MessageList){
                 handler.MessageList.Add(raw);
             }
