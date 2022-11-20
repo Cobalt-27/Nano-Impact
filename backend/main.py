@@ -41,7 +41,7 @@ def genmap(row, col) -> dict:
 
 async def handle(ws, type, data):
     if type == 'NetStartGame':
-        game.start()
+        game.restart()
         await send(ws, 'ServerSetMap', json.dumps(genmap(20, 10)))
         return
     if type == 'NetUpgrade':
