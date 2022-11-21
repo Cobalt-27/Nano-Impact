@@ -2,6 +2,7 @@ import json
 from Shared import *
 import random
 from Character import *
+from Relic import *
 
 
 class NetBlock:
@@ -47,8 +48,10 @@ class NetUnit:
     Exp, Level = 0, 0
     Element = 0
     RelicID = None
-    CanMove, CanAttack = False, False
+    CanMove, CanAttack = True, True
     Faction = None
+
+    # TODO: 射程和移动需要区分一下
 
     def __init__(self, ID, Character, Faction):
         self.ID = ID
@@ -70,7 +73,7 @@ class NetUnit:
 
 class NetRelic:
     ID = None
-    Character = None
+    Type = None
 
     # TODO: 圣遗物的属性如何定义
 
@@ -79,7 +82,7 @@ class NetRelic:
         self.Type = Type
 
     def package(self) -> dict:
-        p = {"ID": self.ID, "RelicType": self.Type["RelicType"]}
+        p = {"ID": self.ID, "RelicType": self.Type.value["RelicType"]}
         return p
 
 
@@ -116,34 +119,43 @@ class Game:
 
         self.map = NetMap(10, 10)
         self.units['C1'] = NetUnit('C1', Character.Amber, Faction.Friendly)
+        self.units['C2'] = NetUnit('C2', Character.Nahida, Faction.Friendly)
+        self.buildings['B1'] = NetBuilding('B1', BuildingType.Church, Faction.Friendly)
+        self.buildings['B2'] = NetBuilding('B2', BuildingType.Statue, Faction.Friendly)
+        self.relics['R1'] = NetRelic('R1', RelicType.R0)
+        self.relics['R2'] = NetRelic('R2', RelicType.R1)
 
     def handle_upgrade(self, id: str):  # 角色升级
-        self.units[id].level += 1
-        return OperationType.ServerSetUnits, self.units
+        self.units[id].Level += 1
+        return OperationType.ServerSetUnits.value, self.package_list(self.units, "Units")
 
     def handle_interact(self, From: str, To: str):  # 交互
         attacker = self.units[From]
         defender = self.units[To]
-        if (attacker.Row - defender.Row) ** 2 + (attacker.Col - defender.Col) ** 2 < attacker.range ** 2 \
+        if (attacker.Row - defender.Row) ** 2 + (attacker.Col - defender.Col) ** 2 < attacker.Range ** 2 \
                 and attacker.CanAttack:
-            defender.Live -= (attacker.Strength - defender.Defense)
-        return OperationType.ServerSetUnits, self.units
+            attacker.CanAttack = False
+            if attacker.Strength - defender.Defence > 0:
+                defender.Life -= (attacker.Strength - defender.Defence)
+
+        return OperationType.ServerSetUnits.value, self.package_list(self.units, "Units")
 
     def handle_move(self, ID: str, Row: int, Col: int):
-        if (self.units[ID].Row - Row) ** 2 + (self.units[ID].Col - Col) ** 2 < self.units[ID].range ** 2 \
+        if (self.units[ID].Row - Row) ** 2 + (self.units[ID].Col - Col) ** 2 < self.units[ID].Range ** 2 \
                 and self.units[ID].CanMove:
             self.units[ID].Row = Row
             self.units[ID].Col = Col
+            self.units[ID].CanMove = False
 
-        return OperationType.ServerSetUnits, self.units
+        return OperationType.ServerSetUnits.value, self.package_list(self.units, "Units")
 
     def handle_assignRelic(self, ID: str, Relic: str):
         self.units[ID].relicID = Relic
-        return OperationType.ServerSetUnits, self.units
+        return OperationType.ServerSetUnits.value, self.package_list(self.units, "Units")
 
     def handle_addBuilding(self, Type: BuildingType, Row: int, Col: int):
         n = len(self.buildings)
-        b = NetBuilding()
+        b = NetBuilding('Building' + str(n), Type, Faction.Friendly)
         b.Row = Row
         b.Col = Col
         b.Type = Type
@@ -173,9 +185,8 @@ class Game:
         return s
 
 
-async def send(ws, type: str, data: str):
+def send(type: str, data: str):
     print('>', type, data)
-    await ws.send(f'{type}@{data}')
 
 
 if __name__ == '__main__':
@@ -185,3 +196,9 @@ if __name__ == '__main__':
     g = Game()
     g.restart()
     print(g.package_list(g.units, "Units"))
+    print(g.package_list(g.buildings, "Buildings"))
+    print(g.package_list(g.relics, "Relics"))
+
+    send(*g.handle_upgrade("C1"))
+    send(*g.handle_interact("C1", "C2"))
+
