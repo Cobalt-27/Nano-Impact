@@ -10,11 +10,6 @@ class OperationType(Enum):
     ClientPrint = 'ClientPrint'
 
 
-class Character(Enum):
-    Nahida = 'Nahida'
-    Amber = 'Amber'
-
-
 class BuildingType(Enum):
     Statue = 'Statue'
     Church = 'Church'
@@ -24,4 +19,10 @@ class UnitType(Enum):
     Melee = 'Melee'
     Range = 'Range'
     Heal = 'Heal'
+
+
+class Faction(Enum):
+    Friendly = 'Friendly'
+    Neutral = 'Neutral'
+    Hostile = 'Hostile'
 

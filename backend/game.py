@@ -1,5 +1,41 @@
 import json
 from Shared import *
+import random
+from Character import *
+
+
+class NetBlock:
+    Row, Col = 0, 0
+    Height = 0.0
+    Type = None
+
+    def __init__(self, Row, Col, Height, Type):
+        self.Row = Row
+        self.Col = Col
+        self.Height = Height
+        self.Type = Type
+
+
+class NetMap:
+    Row, Col = 0, 0
+    blocks = []
+
+    def __init__(self, Row, Col):
+        self.Row = Row
+        self.Col = Col
+        for i in range(Row):
+            r = []
+            for j in range(Col):
+                r.append(NetBlock(i, j, random.random(), random.randint(0, 4)))
+            self.blocks.append(r)
+
+    def package(self) -> dict:
+        m = {"Row": self.Row, "Col": self.Col, "Blocks": []}
+        for i in range(len(self.blocks)):
+            for j in range(len(self.blocks[0])):
+                b = self.blocks[i][j].__dict__
+                m["Blocks"].append(b)
+        return m
 
 
 class NetUnit:
@@ -14,10 +50,37 @@ class NetUnit:
     CanMove, CanAttack = False, False
     Faction = None
 
+    def __init__(self, ID, Character, Faction):
+        self.ID = ID
+        self.Faction = Faction
+        self.Character = Character
+        self.Strength, self.Defence, self.Life, self.Range = \
+            Character.value["Strength"], Character.value["Defence"], Character.value["Life"], Character.value["Range"]
+        self.Type = Character.value["Type"]
+
+    def package(self) -> dict:
+        p = {"ID": self.ID, "Character": self.Character.value["Character"], "Row": self.Row, "Col": self.Col,
+             "Strength": self.Strength, "Defence": self.Defence, "Life": self.Life,
+             "Range": self.Range, "Exp": self.Exp, "Level": self.Level, "Element": self.Element,
+             "RelicID": self.RelicID, "CanMove": self.CanMove, "CanAttack": self.CanAttack,
+             "Faction": self.Faction.value}
+
+        return p
+
 
 class NetRelic:
     ID = None
     Character = None
+
+    # TODO: 圣遗物的属性如何定义
+
+    def __init__(self, ID, Type):
+        self.ID = ID
+        self.Type = Type
+
+    def package(self) -> dict:
+        p = {"ID": self.ID, "RelicType": self.Type["RelicType"]}
+        return p
 
 
 class NetBuilding:
@@ -26,17 +89,33 @@ class NetBuilding:
     Row, Col = 0, 0
     Faction = None
 
+    def __init__(self, ID, Type, Faction):
+        self.ID = ID
+        self.Type = Type
+        self.Faction = Faction
+
+    def package(self) -> dict:
+        p = {"ID": self.ID, "Row": self.Row, "Col": self.Col, "Type": self.Type.value, "Faction": self.Faction.value}
+        return p
+
 
 class Game:
 
     def __init__(self):
         self.units = {}  # {key: str, value: NetUnit}
         self.buildings = {}  # {key: str, value: NetBuilding}
-        self.relics = []  # {key: str, value: NetRelic}
+        self.relics = {}  # {key: str, value: NetRelic}
         self.player = True  # TODO: 判断阵营
+        self.map = []
 
     def restart(self):  # 初始化
-        pass
+        self.units = {}
+        self.buildings = {}
+        self.relics = {}
+        self.player = True
+
+        self.map = NetMap(10, 10)
+        self.units['C1'] = NetUnit('C1', Character.Amber, Faction.Friendly)
 
     def handle_upgrade(self, id: str):  # 角色升级
         self.units[id].level += 1
@@ -86,10 +165,23 @@ class Game:
         # TODO: 退出
         pass
 
+    def package_list(self, data, type):
+        d = []
+        for i in data:
+            d.append(data[i].package())
+        s = {type: d}
+        return s
+
+
+async def send(ws, type: str, data: str):
+    print('>', type, data)
+    await ws.send(f'{type}@{data}')
+
 
 if __name__ == '__main__':
-    unit = NetUnit()
-    unit.row = 114
-    unit.col = 514
-    unit.strength = 1
-    print(json.dumps(unit.__dict__))
+    map = NetMap(10, 10)
+    print(map.package())
+
+    g = Game()
+    g.restart()
+    print(g.package_list(g.units, "Units"))
