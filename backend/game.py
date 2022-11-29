@@ -21,14 +21,23 @@ class NetMap:
     Row, Col = 0, 0
     blocks = []
 
-    def __init__(self, Row, Col):
+    def __init__(self, Row, Col, Blocks=None):
         self.Row = Row
         self.Col = Col
-        for i in range(Row):
-            r = []
-            for j in range(Col):
-                r.append(NetBlock(i, j, random.random(), random.randint(0, 4)))
-            self.blocks.append(r)
+        if Blocks is None:
+            for i in range(Row):
+                r = []
+                for j in range(Col):
+                    r.append(NetBlock(i, j, random.random(), random.randint(0, 4)))
+                self.blocks.append(r)
+        else:
+            for i in range(Row):
+                r = []
+                for j in range(Col):
+                    r.append(
+                        NetBlock(Blocks[i * Col + j]["Row"], Blocks[i * Col + j]["Col"], Blocks[i * Col + j]["Height"],
+                                 Blocks[i * Col + j]["Type"]))
+                self.blocks.append(r)
 
     def package(self) -> dict:
         m = {"Row": self.Row, "Col": self.Col, "Blocks": []}
@@ -40,7 +49,7 @@ class NetMap:
 
 
 class NetUnit:
-    ID = None
+    ID = None  # TODO:下划线开头
     Character = None
     Type = None
     Row, Col = 0, 0
@@ -105,29 +114,52 @@ class NetBuilding:
 class Game:
 
     def __init__(self):
+        self.map = None
         self.units = {}  # {key: str, value: NetUnit}
         self.buildings = {}  # {key: str, value: NetBuilding}
         self.relics = {}  # {key: str, value: NetRelic}
         self.player = True  # TODO: 判断阵营
-        self.map = []
 
-    def restart(self):  # 初始化
+    def restart(self, MapRow, MapCol, Seed, Load, SaveName):  # 初始化
         self.units = {}
         self.buildings = {}
         self.relics = {}
         self.player = True
 
-        self.map = NetMap(10, 10)
-        self.units['C1'] = NetUnit('C1', Character.Amber, Faction.Friendly)
-        self.units['C2'] = NetUnit('C2', Character.Nahida, Faction.Friendly)
-        self.buildings['B1'] = NetBuilding('B1', BuildingType.Church, Faction.Friendly)
-        self.buildings['B2'] = NetBuilding('B2', BuildingType.Statue, Faction.Friendly)
-        self.relics['R1'] = NetRelic('R1', RelicType.R0)
-        self.relics['R2'] = NetRelic('R2', RelicType.R1)
+        if Load is False:
+
+            self.map = NetMap(MapRow, MapCol)
+            self.units['C1'] = NetUnit('C1', Character.Amber, Faction.Friendly)
+            self.units['C2'] = NetUnit('C2', Character.Nahida, Faction.Friendly)
+            self.buildings['B1'] = NetBuilding('B1', BuildingType.Church, Faction.Friendly)
+            self.buildings['B2'] = NetBuilding('B2', BuildingType.Statue, Faction.Friendly)
+            self.relics['R1'] = NetRelic('R1', RelicType.R0)
+            self.relics['R2'] = NetRelic('R2', RelicType.R1)
+
+            send(OperationType.ServerSetMap.value, json.dumps(self.map.package()))
+            send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"))
+            send(OperationType.ServerSetBuildings.value, self.package_list(self.buildings, "Buildings"))
+            send(OperationType.ServerSetRelics.value, self.package_list(self.relics, "Relics"))
+
+        else:
+            self.handle_read("Saving/" + SaveName)
+
+    def set_map(self, Row, Col, Blocks):
+        self.map = NetMap(Row, Col, Blocks)
+        send(OperationType.ServerSetMap.value, self.map.package())
+
+    def set_unit(self, units):  # TODO: 读档
+        pass
+
+    def set_building(self, buildings):
+        pass
+
+    def set_relic(self, relics):
+        pass
 
     def handle_upgrade(self, id: str):  # 角色升级
         self.units[id].Level += 1
-        return OperationType.ServerSetUnits.value, self.package_list(self.units, "Units")
+        send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"))
 
     def handle_interact(self, From: str, To: str):  # 交互
         attacker = self.units[From]
@@ -138,7 +170,12 @@ class Game:
             if attacker.Strength - defender.Defence > 0:
                 defender.Life -= (attacker.Strength - defender.Defence)
 
-        return OperationType.ServerSetUnits.value, self.package_list(self.units, "Units")
+        send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"))
+
+        for i in self.units:
+            if self.units[i].Faction == Faction.Hostile:
+                return
+        send(OperationType.ServerEndGame.value, True)
 
     def handle_move(self, ID: str, Row: int, Col: int):
         if (self.units[ID].Row - Row) ** 2 + (self.units[ID].Col - Col) ** 2 < self.units[ID].Range ** 2 \
@@ -147,11 +184,11 @@ class Game:
             self.units[ID].Col = Col
             self.units[ID].CanMove = False
 
-        return OperationType.ServerSetUnits.value, self.package_list(self.units, "Units")
+        send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"))
 
     def handle_assignRelic(self, ID: str, Relic: str):
         self.units[ID].relicID = Relic
-        return OperationType.ServerSetUnits.value, self.package_list(self.units, "Units")
+        send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"))
 
     def handle_addBuilding(self, Type: BuildingType, Row: int, Col: int):
         n = len(self.buildings)
@@ -161,44 +198,63 @@ class Game:
         b.Type = Type
         b.ID = 'Building' + str(n)
         self.buildings[b.ID] = b
-        return OperationType.ServerSetBuildings, self.buildings
+        send(OperationType.ServerSetBuildings.value, self.package_list(self.buildings, "Buildings"))
 
     def handle_endRound(self):
         self.player = not self.player  # TODO: 交换阵营
 
-    def handle_endGame(self):
-        return OperationType.ServerEndGame, True  # TODO: 判断输赢
-
     def handle_save(self, Name: str):
-        # TODO: 存档
-        pass
+        with open("Saving/" + Name, 'w') as f:
+            f.write(json.dumps(self.map.package()))
+            f.write("\n")
+            f.write(self.package_list(self.units, "Units"))
+            f.write("\n")
+            f.write(self.package_list(self.buildings, "Buildings"))
+            f.write("\n")
+            f.write(self.package_list(self.relics, "Relics"))
+            f.write("\n")
+            f.write(str(self.player))
+
+    def handle_read(self, Name: str):
+        with open("Saving/" + Name, 'r') as f:
+            read = f.read()
+        read = read.split("\n")
+        map = json.loads(read[0])
+        character = json.loads(read[1])
+        building = json.loads(read[2])
+        relic = json.loads(read[3])
+
+        self.set_map(map["Row"], map["Col"], map["Blocks"])
+        self.set_unit(character)
+        self.set_building(building)
+        self.set_relic(relic)
 
     def handle_quit(self):
-        # TODO: 退出
-        pass
 
-    def package_list(self, data, type):
+        send(OperationType.ServerEndGame.value, False)
+
+    def package_list(self, data, type=None):
         d = []
         for i in data:
             d.append(data[i].package())
-        s = {type: d}
+        if type is not None:
+            s = json.dumps({type: d})
+        else:
+            s = json.dumps(d)
         return s
 
 
-def send(type: str, data: str):
+def send(type: str, data):
     print('>', type, data)
 
 
 if __name__ == '__main__':
     map = NetMap(10, 10)
-    print(map.package())
 
     g = Game()
-    g.restart()
-    print(g.package_list(g.units, "Units"))
-    print(g.package_list(g.buildings, "Buildings"))
-    print(g.package_list(g.relics, "Relics"))
+    g.restart(10, 10, None, False, None)
 
-    send(*g.handle_upgrade("C1"))
-    send(*g.handle_interact("C1", "C2"))
-
+    g.handle_upgrade("C1")
+    g.handle_save("s1.txt")
+    g.handle_read("s1.txt")
+    g.handle_interact("C1", "C2")
