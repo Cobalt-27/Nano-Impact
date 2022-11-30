@@ -116,12 +116,13 @@ class NetBuilding:
 
 class Game:
 
-    def __init__(self):
+    def __init__(self, send):
         self.map = None
         self.units = {}  # {key: str, value: NetUnit}
         self.buildings = {}  # {key: str, value: NetBuilding}
         self.relics = {}  # {key: str, value: NetRelic}
         self.player = True  # TODO: 判断阵营
+        self.send = send
 
     def restart(self, SaveName):  # 初始化 default
         self.units = {}
@@ -133,7 +134,7 @@ class Game:
 
     def set_map(self, Row, Col, Blocks):
         self.map = NetMap(Row, Col, Blocks)
-        send(OperationType.ServerSetMap.value, json.dumps(self.map.package()))
+        self.send(OperationType.ServerSetMap.value, json.dumps(self.map.package()))
 
     def set_unit(self, units):  # TODO: 读档
         self.units = {}
@@ -141,25 +142,25 @@ class Game:
             a = NetUnit(i["ID"], i["Character"], i["Faction"], i["Strength"], i["Defence"], i["Life"], i["Range"],
                         i["Type"])
             self.units[a.ID] = a
-        send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"))
+        self.send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"))
 
     def set_building(self, buildings):
         self.buildings = {}
         for i in buildings["Buildings"]:
             b = NetBuilding(i["ID"], i["Row"], i["Col"], i["Type"], i["Faction"])
             self.buildings[b.ID] = b
-        send(OperationType.ServerSetBuildings.value, self.package_list(self.buildings, "Buildings"))
+        self.send(OperationType.ServerSetBuildings.value, self.package_list(self.buildings, "Buildings"))
 
     def set_relic(self, relics):
         self.relics = {}
         for i in relics["Relics"]:
             b = NetRelic(i["ID"], i["RelicType"])
             self.relics[b.ID] = b
-        send(OperationType.ServerSetRelics.value, self.package_list(self.relics, "Relics"))
+        self.send(OperationType.ServerSetRelics.value, self.package_list(self.relics, "Relics"))
 
     def handle_upgrade(self, id: str):  # 角色升级 ID不存在
         self.units[id].Level += 1
-        send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"))
+        self.send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"))
 
     def handle_interact(self, From: str, To: str):  # 交互
         attacker = self.units[From]
@@ -172,12 +173,12 @@ class Game:
             if defender.Life <= 0:
                 self.units.pop(defender.ID)
 
-        send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"))
+        self.send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"))
 
         for i in self.units:
             if self.units[i].Faction == "Hostile":
                 return
-        send(OperationType.ServerEndGame.value, True)
+        self.send(OperationType.ServerEndGame.value, True)
 
     def handle_move(self, ID: str, Row: int, Col: int):
         if (self.units[ID].Row - Row) ** 2 + (self.units[ID].Col - Col) ** 2 <= self.units[ID].Range ** 2 \
@@ -186,11 +187,11 @@ class Game:
             self.units[ID].Col = Col
             self.units[ID].CanMove = False
 
-        send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"))
+        self.send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"))
 
     def handle_assignRelic(self, ID: str, Relic: str):
         self.units[ID].relicID = Relic
-        send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"))
+        self.send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"))
 
     def handle_addBuilding(self, Type: str, Row: int, Col: int):
         n = len(self.buildings)
@@ -198,7 +199,7 @@ class Game:
         b.Type = Type
         b.ID = 'Building' + str(n)
         self.buildings[b.ID] = b
-        send(OperationType.ServerSetBuildings.value, self.package_list(self.buildings, "Buildings"))
+        self.send(OperationType.ServerSetBuildings.value, self.package_list(self.buildings, "Buildings"))
 
     def handle_endRound(self):
         self.player = not self.player  # TODO: 交换阵营
@@ -231,7 +232,7 @@ class Game:
 
     def handle_quit(self):
 
-        send(OperationType.ServerEndGame.value, False)
+        self.send(OperationType.ServerEndGame.value, False)
 
     def package_list(self, data, type=None):
         d = []
@@ -244,8 +245,8 @@ class Game:
         return s
 
 
-def send(type: str, data):
-    print('>', type, data)
+# def send(type: str, data):
+#     print('>', type, data)
 
 
 if __name__ == '__main__':

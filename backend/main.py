@@ -4,23 +4,33 @@ import asyncio
 import random
 from game import Game
 
-game = Game()
+to_send = []
 
 
-async def send(ws, type: str, data: str):
+def send(type: str, data: str):
+    print('>', type, data)
+    for ws in to_send:
+        try:
+            asyncio.new_event_loop().run_until_complete(ws.send(f'{type}@{data}'))
+        except Exception:
+            to_send.remove(ws)
+
+
+async def async_send(ws, type: str, data: str):
     print('>', type, data)
     await ws.send(f'{type}@{data}')
 
 
 async def nethandle(websocket, path):
     print('echo')
+    to_send.append(websocket)
     async for message in websocket:
         idx = message.find('@')
         type = message[0:idx]
         data = message[idx + 1:]
         print('@', type)
         print('<', data)
-        await handle(websocket, type, data)
+        asyncio.get_event_loop().run_in_executor(None, handle, websocket, type, data)
 
 
 def genmap(row, col) -> dict:
@@ -39,27 +49,32 @@ def genmap(row, col) -> dict:
     return m
 
 
-async def handle(ws, type, data):
+def handle(ws, type, data):
+    pass
     if type == 'NetStartGame':
-        game.restart()
-        await send(ws, 'ServerSetMap', json.dumps(genmap(20, 10)))
+        # game.restart(20, 20, None, False, None)
         return
     if type == 'NetUpgrade':
         data_json = json.loads(data)
-        unit = game.handle_upgrade(data_json['ID'])
-        await send(ws, 'ServerSetUnits', json.dumps([unit]))
-    # testdata = {
-    #     'attribute0': 20,
-    # }
-    # await send(ws, 'test', json.dumps(testdata))
+        game.handle_upgrade(data_json['ID'])
+
+
+async def wait_input():
+    while True:
+        read = await loop.run_in_executor(executor=None, func=input)
+        print(read)
+        await loop.run_in_executor(None, send, 'ClientPrint', 'TestMessage')
 
 
 if __name__ == '__main__':
     ip = 'localhost'
     port = 7777
+    game = Game(send)
     loop = asyncio.new_event_loop()
+    loop2 = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     print(f'start server at {ip} {port}')
     loop.run_until_complete(
         websockets.serve(nethandle, ip, port))
+    loop.run_until_complete(wait_input())
     loop.run_forever()
