@@ -1,6 +1,7 @@
 import json
 import random
 from Shared import *
+from main import *
 
 
 class NetBlock:
@@ -60,7 +61,7 @@ class NetUnit:
 
     # TODO: 射程和移动需要区分一下
 
-    def __init__(self, ID, Character, Faction, Strength, Defence, Life, Range, Type):
+    def __init__(self, ID, Character, Faction, Strength, Defence, Life, Range, Type, Row, Col):
         self.ID = ID
         self.Faction = Faction
         self.Character = Character
@@ -70,6 +71,9 @@ class NetUnit:
         self.Life = Life
         self.Range = Range
         self.Type = Type
+
+        self.Row = Row
+        self.Col = Col
 
     def package(self) -> dict:
         p = {"ID": self.ID, "Character": self.Character, "Row": self.Row, "Col": self.Col,
@@ -140,7 +144,7 @@ class Game:
         self.units = {}
         for i in units["Units"]:
             a = NetUnit(i["ID"], i["Character"], i["Faction"], i["Strength"], i["Defence"], i["Life"], i["Range"],
-                        i["Type"])
+                        i["Type"], i["Row"], i["Col"])
             self.units[a.ID] = a
         self.send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"))
 
@@ -250,7 +254,7 @@ class Game:
 
 
 if __name__ == '__main__':
-    g = Game()
+    g = Game(send)
     g.restart("default.txt")
     g.handle_interact("_1", "_2")
     g.handle_move("_1", 3, 3)
