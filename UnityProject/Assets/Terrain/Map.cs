@@ -6,6 +6,7 @@ namespace Nano
 {
     public class Map : MonoBehaviour
     {
+        public static Map Instance;
         public Block[,] BlockSet=new Block[0,0];
         [SerializeField]
         private GameObject plainPrefab;
@@ -32,6 +33,7 @@ namespace Nano
         // Start is called before the first frame update
         void Start()
         {
+            Instance=this;
             emptyPrefab=new GameObject();
         }
 
@@ -63,7 +65,9 @@ namespace Nano
         }
 
 
-        public Vector3 GetPosition(int row, int col, float height)
+        
+
+        private Vector3 GetPosition(int row, int col, float height)
         {
             float sqrt3 = (float)System.Math.Sqrt(3);
             float colShift = row % 2 == 0 ? 0 : UnitLength * 1.5f;
@@ -72,6 +76,7 @@ namespace Nano
 
         public void NetUpdate(ServerSetMap args)
         {
+            Debug.Assert(args.Blocks.Length==args.Row*args.Col);
             Clear();
             BlockSet = new Block[args.Row, args.Col];
             foreach (var b in args.Blocks)
@@ -91,6 +96,7 @@ namespace Nano
         private Block CreateBlock(GameObject prefab, int row, int col, float height)
         {
             var instance = Instantiate(prefab, GetPosition(row, col, height), Quaternion.identity);
+            instance.transform.RotateAround(instance.transform.position, Vector3.up, 60f*Random.Range(0,6));
             instance.transform.SetParent(gameObject.transform);
             var block = instance.AddComponent<Block>();
             block.Init(row, col);

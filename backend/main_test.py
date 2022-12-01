@@ -2,13 +2,9 @@ import json
 import websockets
 import asyncio
 import random
-# from game import Game
+from game import Game
 
-game = None
-
-async def setgame(obj):
-    game=obj
-
+game=Game()
 
 async def send(ws, type: str, data: str):
     print('>', type, data)
@@ -16,14 +12,16 @@ async def send(ws, type: str, data: str):
 
 
 async def nethandle(websocket, path):
-    print('echo')
-    async for message in websocket:
-        idx = message.find('@')
-        type = message[0:idx]
-        data = message[idx + 1:]
-        print('@', type)
-        print('<', data)
-        await handle(websocket, type, data)
+    try:
+        async for message in websocket:
+            idx = message.find('@')
+            type = message[0:idx]
+            data = message[idx + 1:]
+            print('@', type)
+            print('<', data)
+            await handle(websocket, type, data)
+    except:
+        print('connection closed')
 
 
 def genmap(row, col) -> dict:
@@ -43,14 +41,20 @@ def genmap(row, col) -> dict:
 
 
 async def handle(ws, type, data):
+    global game
+    game.clearbuf()
+    d=json.loads(data)
     if type == 'NetStartGame':
-        game.restart()
-        await send(ws, 'ServerSetMap', json.dumps(genmap(20, 10)))
-        return
+        game=Game()
+        game.restart(d['SaveName'])
+        # await send(ws, 'ServerSetMap', json.dumps(genmap(20, 10)))
     if type == 'NetUpgrade':
-        data_json = json.loads(data)
-        unit = game.handle_upgrade(data_json['ID'])
-        await send(ws, 'ServerSetUnits', json.dumps([unit]))
+        pass
+        # data_json = json.loads(data)
+        # unit = game.handle_upgrade(data_json['ID'])
+        # await send(ws, 'ServerSetUnits', json.dumps([unit]))
+    for type,content in game.getbuf():
+        await send(ws,type,content)
 
 
 if __name__ == '__main__':

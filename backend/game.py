@@ -127,6 +127,7 @@ class Game:
         self.units = {}
         self.buildings = {}
         self.relics = {}
+        self.map={}
         self.player = True
         self.toSend = []
 
@@ -248,7 +249,7 @@ class Game:
         self.toSend.append((type, value))
 
     def clearbuf(self):
-        self.toSend = []
+        self.toSend=[]
 
     def getbuf(self):
         return self.toSend
