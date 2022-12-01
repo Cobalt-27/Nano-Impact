@@ -1,7 +1,6 @@
 import json
 import random
 from Shared import *
-from main import send
 
 
 class NetBlock:
@@ -120,13 +119,13 @@ class NetBuilding:
 
 class Game:
 
-    def __init__(self, send):
+    def __init__(self):
         self.map = None
         self.units = {}  # {key: str, value: NetUnit}
         self.buildings = {}  # {key: str, value: NetBuilding}
         self.relics = {}  # {key: str, value: NetRelic}
         self.player = True  # TODO: 判断阵营
-        self.send = send
+        self.toSend = []
 
     def restart(self, SaveName):  # 初始化 default
         self.units = {}
@@ -248,14 +247,19 @@ class Game:
             s = json.dumps(d)
         return s
 
+    def send(self, type, value):
+        self.toSend.append((type, value))
 
-# def send(type: str, data):
-#     print('>', type, data)
+    def clearbuf(self):
+        self.toSend = []
+
+    def getbuf(self):
+        return self.toSend
 
 
 if __name__ == '__main__':
-    g = Game(send)
+    g = Game()
     g.restart("default.txt")
     g.handle_interact("_1", "_2")
     g.handle_move("_1", 3, 3)
-
+    print(g.toSend)
