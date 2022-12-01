@@ -12,13 +12,16 @@ async def send(ws, type: str, data: str):
 
 
 async def nethandle(websocket, path):
-    async for message in websocket:
-        idx = message.find('@')
-        type = message[0:idx]
-        data = message[idx + 1:]
-        print('@', type)
-        print('<', data)
-        await handle(websocket, type, data)
+    try:
+        async for message in websocket:
+            idx = message.find('@')
+            type = message[0:idx]
+            data = message[idx + 1:]
+            print('@', type)
+            print('<', data)
+            await handle(websocket, type, data)
+    except:
+        print('connection closed')
 
 
 def genmap(row, col) -> dict:
@@ -38,9 +41,11 @@ def genmap(row, col) -> dict:
 
 
 async def handle(ws, type, data):
+    global game
     game.clearbuf()
     d=json.loads(data)
     if type == 'NetStartGame':
+        game=Game()
         game.restart(d['SaveName'])
         # await send(ws, 'ServerSetMap', json.dumps(genmap(20, 10)))
     if type == 'NetUpgrade':
@@ -48,8 +53,7 @@ async def handle(ws, type, data):
         # data_json = json.loads(data)
         # unit = game.handle_upgrade(data_json['ID'])
         # await send(ws, 'ServerSetUnits', json.dumps([unit]))
-    tosend=game.getbuf()
-    for type,content in tosend:
+    for type,content in game.getbuf():
         await send(ws,type,content)
 
 

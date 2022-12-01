@@ -76,6 +76,7 @@ namespace Nano
 
         public void NetUpdate(ServerSetMap args)
         {
+            Debug.Assert(args.Blocks.Length==args.Row*args.Col);
             Clear();
             BlockSet = new Block[args.Row, args.Col];
             foreach (var b in args.Blocks)

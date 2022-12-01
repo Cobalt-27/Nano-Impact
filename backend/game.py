@@ -252,7 +252,7 @@ class Game:
         self.toSend.append((type, value))
 
     def clearbuf(self):
-        self.toSend = []
+        self.toSend=[]
 
     def getbuf(self):
         return self.toSend
