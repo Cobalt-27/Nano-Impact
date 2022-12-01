@@ -35,7 +35,7 @@ namespace Nano
                     string json = raw.Substring(idx + 1);
                     print($"@ {type}");
                     print($"> {json}");
-                    Dispatch(type,json);
+                    Dispatch(type, json);
                 }
                 MessageList.Clear();
             }
@@ -49,10 +49,10 @@ namespace Nano
                     mapInstance.GetComponent<Map>().NetUpdate(To<ServerSetMap>(json));
                     break;
                 case "ServerSetUnits":
-                    OnSetUnits(To<ServerSetUnits>(json));
+                    // OnSetUnits(To<ServerSetUnits>(json));
                     break;
                 case "ServerSetRelics":
-                    OnSetRelics(To<ServerSetRelics>(json));
+                    // OnSetRelics(To<ServerSetRelics>(json));
                     break;
                 case "ServerSetBuildings":
                     OnSetBuildings(To<ServerSetBuildings>(json));
@@ -74,13 +74,15 @@ namespace Nano
             objList.Where(o => !exclude.Contains(o.name)).ToList().ForEach(o => Destroy(o));
         }
 
-        private IEnumerable<GameObject> CreateIfNeeded(string tag,IEnumerable<string> names,GameObject prefab){
-            var inited=new List<GameObject>();
+        private IEnumerable<GameObject> CreateIfNeeded(string tag, IEnumerable<string> names, GameObject prefab)
+        {
+            var inited = new List<GameObject>();
             var objList = GameObject.FindGameObjectsWithTag(tag).ToList();
-            var toInit=names.Except(names);
-            foreach(var name in toInit){
-                var o=Instantiate(prefab,Vector3.zero,Quaternion.identity);
-                o.name=name;
+            var toInit = names.Except(objList.Select(o=>o.name));
+            foreach (var name in toInit)
+            {
+                var o = Instantiate(prefab, Vector3.zero, Quaternion.identity);
+                o.name = name;
                 inited.Add(o);
             }
             return inited;
@@ -88,26 +90,26 @@ namespace Nano
 
         private void OnSetUnits(ServerSetUnits args)
         {
-            var tag="Unit";
-            var names=args.Units.Select(u => u.ID);
-            Remove(tag, names);
-            CreateIfNeeded(tag, names,unitPrefab);
-            
+            var names = args.Units.Select(u => u.ID);
+            Remove(Main.UnitTag, names);
+            CreateIfNeeded(tag, names, unitPrefab);
         }
         private void OnSetRelics(ServerSetRelics args)
         {
-            var tag="Relic";
-            var names=args.Relics.Select(u => u.ID);
-            Remove(tag, names);
-            CreateIfNeeded(tag,names,relicPrefab);
+            var names = args.Relics.Select(u => u.ID);
+            Remove(Main.RelicTag, names);
+            CreateIfNeeded(tag, names, relicPrefab);
         }
 
         private void OnSetBuildings(ServerSetBuildings args)
         {
-            var tag="Building";
-            var names=args.Buildings.Select(u => u.ID);
-            Remove(tag, names);
-            CreateIfNeeded(tag,names,buildingPrefab);
+            var names = args.Buildings.Select(u => u.ID).ToList();
+            Remove(Main.BuildingTag, names);
+            CreateIfNeeded(tag, names, buildingPrefab);
+            foreach (var b in args.Buildings)
+            {
+                GameObject.Find(b.ID).GetComponent<Building>().NetUpdate(b);
+            }
         }
     }
 }

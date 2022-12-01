@@ -131,6 +131,7 @@ class Game:
         self.units = {}
         self.buildings = {}
         self.relics = {}
+        self.map={}
         self.player = True
 
         self.handle_read("Saving/" + SaveName)

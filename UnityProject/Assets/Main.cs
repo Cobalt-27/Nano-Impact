@@ -19,17 +19,24 @@ namespace Nano
         private NetHandler handler;
         public readonly string IP = "localhost";
         public readonly int port = 7777;
+        public readonly string MapTag="Map";
+        public static readonly string UnitTag="Unit";
+        public static readonly string BuildingTag="Building";
+        public static readonly string RelicTag="Relic";
         // Start is called before the first frame update
         void Start()
         {
-            NetInit();
             Instance = this;
+            InitGame();
+        }
+
+        void InitGame(){
+            Connect(IP, port);
             NetSend(new NetStartGame(){
                 SaveName="default.txt",
             });
         }
 
-        private void NetInit() => Connect(IP, port);
 
         private void Connect(string ip, int port)
         {
@@ -55,7 +62,7 @@ namespace Nano
             }
             else
             {
-                print("NetSend: connection closed");
+                print("NetSend failed: connection closed");
             }
         }
 
@@ -78,7 +85,7 @@ namespace Nano
             {
                 if (Input.GetKeyDown(KeyCode.P))
                 {
-                    NetInit();
+                    InitGame();
                 }
             }
         }
