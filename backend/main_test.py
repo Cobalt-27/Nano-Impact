@@ -61,4 +61,4 @@ if __name__ == '__main__':
     print(f'start server at {ip} {port}')
     loop.run_until_complete(
         websockets.serve(nethandle, ip, port))
-    # loop.run_forever()
+    loop.run_forever()
