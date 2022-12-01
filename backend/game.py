@@ -19,23 +19,18 @@ class NetMap:
     Row, Col = 0, 0
     blocks = []
 
-    def __init__(self, Row, Col, Blocks=None):
+    def __init__(self, Row, Col, Blocks):
         self.Row = Row
         self.Col = Col
-        if Blocks is None:
-            for i in range(Row):
-                r = []
-                for j in range(Col):
-                    r.append(NetBlock(i, j, random.random(), random.randint(0, 4)))
-                self.blocks.append(r)
-        else:
-            for i in range(Row):
-                r = []
-                for j in range(Col):
-                    r.append(
-                        NetBlock(Blocks[i * Col + j]["Row"], Blocks[i * Col + j]["Col"], Blocks[i * Col + j]["Height"],
-                                 Blocks[i * Col + j]["Type"]))
-                self.blocks.append(r)
+        self.blocks = []
+
+        for i in range(Row):
+            r = []
+            for j in range(Col):
+                r.append(
+                    NetBlock(Blocks[i * Col + j]["Row"], Blocks[i * Col + j]["Col"], Blocks[i * Col + j]["Height"],
+                             Blocks[i * Col + j]["Type"]))
+            self.blocks.append(r)
 
     def package(self) -> dict:
         m = {"Row": self.Row, "Col": self.Col, "Blocks": []}
@@ -128,10 +123,12 @@ class Game:
         self.toSend = []
 
     def restart(self, SaveName):  # 初始化 default
+        self.map = None
         self.units = {}
         self.buildings = {}
         self.relics = {}
         self.player = True
+        self.toSend = []
 
         self.handle_read("Saving/" + SaveName)
 
@@ -260,6 +257,10 @@ class Game:
 if __name__ == '__main__':
     g = Game()
     g.restart("default.txt")
-    g.handle_interact("_1", "_2")
-    g.handle_move("_1", 3, 3)
-    print(g.toSend)
+
+    g2 = Game()
+    g2.restart("default.txt")
+    print(g2.toSend)
+
+
+
