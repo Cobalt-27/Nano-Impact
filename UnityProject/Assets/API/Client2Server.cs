@@ -9,20 +9,11 @@ namespace Nano
     }
     public class NetStartGame : INetMessage
     {
-        //null if load save
-        public int MapRow, MapCol;
-        public int Seed;
-        //null if create new
-        public bool Load;
-        public string SaveName;
+        public int MapRow, MapCol;//ignore
+        public int Seed;//ignored
+        public bool Load;//ignored
+        public string SaveName;//"default"
     }
-
-    //unit
-    public class NetUpgrade : INetMessage
-    {
-        public string ID;
-    }
-
     public class NetInteract : INetMessage
     {
         public string From, To;
@@ -48,7 +39,7 @@ namespace Nano
 
     class NetEndRound : INetMessage
     {
-
+        
     }
 
     class NetSave : INetMessage

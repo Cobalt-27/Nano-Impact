@@ -9,19 +9,29 @@ namespace Nano
 {
     public class Main : MonoBehaviour
     {
-        public static Main Instance{get;private set;}
+        public static Main Instance { get; private set; }
+        public bool Connected
+        {
+            get => ws != null && ws.IsAlive;
+        }
         private WebSocket ws;
         [SerializeField]
         private NetHandler handler;
+        public readonly string IP = "localhost";
+        public readonly int port = 7777;
         // Start is called before the first frame update
         void Start()
         {
-            NetInit("localhost", 7777);
-            Instance=this;
-            NetSend(new NetStartGame());
+            NetInit();
+            Instance = this;
+            NetSend(new NetStartGame(){
+                SaveName="default.txt",
+            });
         }
 
-        private void NetInit(string ip, int port)
+        private void NetInit() => Connect(IP, port);
+
+        private void Connect(string ip, int port)
         {
             ws = new WebSocket($"ws://{ip}:{port}");
             ws.Connect();
@@ -30,30 +40,46 @@ namespace Nano
         }
 
         void NetReceive(string raw)
-        {    
-            lock(handler.MessageList){
+        {
+            lock (handler.MessageList)
+            {
                 handler.MessageList.Add(raw);
             }
         }
 
-        void NetSend<T>(T data){
-            ws.Send($"{data.GetType().Name}@{JsonConvert.SerializeObject(data)}");
+        void NetSend<T>(T data)
+        {
+            if (Connected)
+            {
+                ws.Send($"{data.GetType().Name}@{JsonConvert.SerializeObject(data)}");
+            }
+            else
+            {
+                print("NetSend: connection closed");
+            }
         }
 
         // Update is called once per frame
         void Update()
         {
 
-            if (ws == null)
+            if (Connected)
             {
-                return;
+                if (Input.GetKeyDown(KeyCode.O))
+                {
+                    var msg = new ServerPrint()
+                    {
+                        content = "test msg"
+                    };
+                    NetSend(msg);
+                }
             }
-            if (Input.GetKeyDown(KeyCode.Space))
+            else
             {
-                var msg=new ServerPrint(){
-                    content="test msg"
-                };
-                NetSend(msg);
+                if (Input.GetKeyDown(KeyCode.P))
+                {
+                    NetInit();
+                }
             }
         }
     }

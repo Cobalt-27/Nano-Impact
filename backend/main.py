@@ -2,7 +2,7 @@ import json
 import websockets
 import asyncio
 import random
-from game import Game
+# from game import Game
 
 to_send = []
 

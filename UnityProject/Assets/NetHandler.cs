@@ -49,15 +49,17 @@ namespace Nano
                     mapInstance.GetComponent<Map>().NetUpdate(To<ServerSetMap>(json));
                     break;
                 case "ServerSetUnits":
-                    
+                    OnSetUnits(To<ServerSetUnits>(json));
                     break;
                 case "ServerSetRelics":
+                    OnSetRelics(To<ServerSetRelics>(json));
                     break;
                 case "ServerSetBuildings":
+                    OnSetBuildings(To<ServerSetBuildings>(json));
                     break;
                 case "ClientPrint":
-                    var data = To<ClientPrint>(json);
-                    print(data.content);
+                    var content = To<ClientPrint>(json);
+                    print(content.content);
                     break;
                 case "ServerEndGame":
                     break;
@@ -66,10 +68,10 @@ namespace Nano
             }
         }
 
-        private void Remove(string tag, IEnumerable<string> except)
+        private void Remove(string tag, IEnumerable<string> exclude)
         {
             var objList = GameObject.FindGameObjectsWithTag(tag).ToList();
-            objList.Where(o => !except.Contains(o.name)).ToList().ForEach(o => Destroy(o));
+            objList.Where(o => !exclude.Contains(o.name)).ToList().ForEach(o => Destroy(o));
         }
 
         private IEnumerable<GameObject> CreateIfNeeded(string tag,IEnumerable<string> names,GameObject prefab){
@@ -91,7 +93,6 @@ namespace Nano
             Remove(tag, names);
             CreateIfNeeded(tag, names,unitPrefab);
             
-            // var toInit=
         }
         private void OnSetRelics(ServerSetRelics args)
         {
@@ -99,8 +100,6 @@ namespace Nano
             var names=args.Relics.Select(u => u.ID);
             Remove(tag, names);
             CreateIfNeeded(tag,names,relicPrefab);
-            
-            // Clean("Relic",netRelics.Select(r=>r.ID));
         }
 
         private void OnSetBuildings(ServerSetBuildings args)
@@ -109,7 +108,6 @@ namespace Nano
             var names=args.Buildings.Select(u => u.ID);
             Remove(tag, names);
             CreateIfNeeded(tag,names,buildingPrefab);
-            // Clean("Building",netBuildings.Select(b=>b.ID));
         }
     }
 }
