@@ -1,7 +1,7 @@
 import json
 import random
 from Shared import *
-from main import *
+from main import send
 
 
 class NetBlock:
