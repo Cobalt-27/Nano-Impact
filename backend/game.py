@@ -198,7 +198,7 @@ class Game:
 
     def handle_addBuilding(self, Type: str, Row: int, Col: int):
         n = len(self.buildings)
-        b = NetBuilding('Building' + str(n), Row, Col, Type, Faction.Friendly)
+        b = NetBuilding('Building' + str(n), Row, Col, Type, Faction.Blue)
         b.Type = Type
         b.ID = 'Building' + str(n)
         self.buildings[b.ID] = b

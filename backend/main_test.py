@@ -12,16 +12,16 @@ async def send(ws, type: str, data: str):
 
 
 async def nethandle(websocket, path):
-    try:
-        async for message in websocket:
-            idx = message.find('@')
-            type = message[0:idx]
-            data = message[idx + 1:]
-            print('@', type)
-            print('<', data)
-            await handle(websocket, type, data)
-    except Exception as e:
-        print(repr(e))
+    # try:
+    async for message in websocket:
+        idx = message.find('@')
+        type = message[0:idx]
+        data = message[idx + 1:]
+        print('@', type)
+        print('<', data)
+        await handle(websocket, type, data)
+    # except Exception as e:
+    #     print(repr(e))
         # print('connection closed')
 
 
