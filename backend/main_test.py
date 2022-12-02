@@ -57,7 +57,7 @@ async def handle(ws, type, data):
     if type == 'NetEndRound':
         game.handle_endRound()
     if type =='NetInteract':
-        game.handle_interact(id['From'],id['To'])
+        game.handle_interact(d['From'],d['To'])
     if type== 'NetMove':
         game.handle_move(d['ID'],d['Row'],d['Col'])
     for type,content in game.getbuf():

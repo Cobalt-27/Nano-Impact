@@ -179,7 +179,7 @@ class Game:
         self.send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"))
 
         for i in self.units:
-            if self.units[i].Faction == "Hostile":
+            if self.units[i].Faction == "Red":
                 return
         self.send(OperationType.ServerEndGame.value, True)
 
@@ -262,7 +262,7 @@ class Game:
         return self.toSend
 
     def checkFaction(self, unit):
-        if (unit.Faction == "Friendly" and self.player) or (unit.Faction == "Hostile" and not self.player):
+        if (unit.Faction == "Blue" and self.player) or (unit.Faction == "Red" and not self.player):
             return True
         else:
             return False

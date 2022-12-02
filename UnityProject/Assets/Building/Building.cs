@@ -24,7 +24,7 @@ namespace Nano
             gameObject.tag=Main.BuildingTag;
         }
         public void NetUpdate(NetBuilding data){
-            var pos=Map.Instance.BlockSet[data.Row,data.Col].transform.position;
+            var pos=Map.Instance.BlockSet[data.Row,data.Col].Top;
             gameObject.transform.position=pos;
             Type=data.Type;
             Faction=data.Faction;
