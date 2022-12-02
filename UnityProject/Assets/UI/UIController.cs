@@ -15,6 +15,8 @@ namespace Nano
         private GameObject rightList;
         [SerializeField]
         private GameObject title;
+        [SerializeField]
+        private GameObject barText;
         public static UIController Instance;
         // Start is called before the first frame update
         void Start()
@@ -53,6 +55,9 @@ namespace Nano
         }
         public void SetTitle(string s){
             title.GetComponent<TextMeshProUGUI>().text=s;
+        }
+        public void SetBar(string s){
+            barText.GetComponent<TextMeshProUGUI>().text=s;
         }
     }
 }

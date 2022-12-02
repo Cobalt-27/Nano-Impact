@@ -1,3 +1,4 @@
+using System.Net.NetworkInformation;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -89,6 +90,9 @@ namespace Nano
                 }
                 if(Input.GetKeyDown(KeyCode.Delete)){
                     NetSend(new NetEndRound());
+                }
+                if(Input.GetKeyDown(KeyCode.Backspace)){
+                    NetSend(new NetRollback());
                 }
             }
             else
