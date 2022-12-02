@@ -42,11 +42,21 @@ namespace Nano
                     var block=c as Block;
                     Debug.Assert(block is not null);
                     if(selectType==SelectType.Unit){
-                        Main.Instance.NetSend(new NetMove(){
+                        var from=selected as Unit;
+                        Debug.Assert(from is not null);
+                        if(block.Unit is not null){
+                            Main.Instance.NetSend(new NetInteract(){
+                                From=from.name,
+                                To=block.Unit.name,
+                            });
+                        }       
+                        else{
+                            Main.Instance.NetSend(new NetMove(){
                             ID=selected.gameObject.name,
                             Row=block.Row,
                             Col=block.Col,
                         });
+                        }
                     }
                     break;
                 default:

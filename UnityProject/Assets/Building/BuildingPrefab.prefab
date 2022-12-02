@@ -47,5 +47,5 @@ MonoBehaviour:
   statuePrefab: {fileID: 7264469984397161044, guid: c4e0303a363d05c49aecd48b4ed3d8ed,
     type: 3}
   churchPrefab: {fileID: 0}
-  statueY: 2.6
-  churchY: 2.6
+  statueY: 0.2
+  churchY: 0.2

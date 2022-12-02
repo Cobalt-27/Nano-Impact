@@ -9,6 +9,9 @@ namespace Nano
     {
         public int Row { get; private set; }
         public int Col { get; private set; }
+        public Vector3 Top{
+            get=>gameObject.transform.Find("Top").transform.position;
+        }
         public Nano.Unit Unit
         {
             get => Nano.Unit.AllUnitScripts.FirstOrDefault(u => u.Row == Row && u.Col == Col);
@@ -19,6 +22,8 @@ namespace Nano
             foreach (Transform child in gameObject.transform)
             {
                 var obj = child.gameObject;
+                if(obj.name=="Top")
+                    continue;
                 var mesh = obj.GetComponent<MeshFilter>().sharedMesh;
                 obj.AddComponent<MeshCollider>().sharedMesh = mesh;
                 var listener = obj.AddComponent<MouseListener>();

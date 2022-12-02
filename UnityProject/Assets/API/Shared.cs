@@ -26,7 +26,7 @@ namespace Nano
     }
     public enum Faction
     {
-        Friendly, Neutral, Hostile
+        Blue, Neutral, Red
     }
     public enum BuildingType
     {

@@ -61,7 +61,11 @@ namespace Nano
         {
             if (Connected)
             {
-                ws.Send($"{data.GetType().Name}@{JsonConvert.SerializeObject(data)}");
+                string type=data.GetType().Name;
+                string json=JsonConvert.SerializeObject(data);
+                print($"@ {type}");
+                print($"< {json}");
+                ws.Send($"{type}@{JsonConvert.SerializeObject(data)}");
             }
             else
             {
@@ -82,6 +86,9 @@ namespace Nano
                         content = "test msg"
                     };
                     NetSend(msg);
+                }
+                if(Input.GetKeyDown(KeyCode.Delete)){
+                    NetSend(new NetEndRound());
                 }
             }
             else

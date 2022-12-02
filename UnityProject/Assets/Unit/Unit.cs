@@ -11,7 +11,7 @@ namespace Nano
         public UnitType Type{get;private set;}
         public int Row{get;private set;}
         public int Col{get;private set;}
-        public int Strengh{get;private set;}
+        public int Strength{get;private set;}
         public int Defence{get;private set;}
         public int Life{get;private set;}
         public int Range{get;private set;}
@@ -45,7 +45,7 @@ namespace Nano
             Type=data.Type;
             Row=data.Row;
             Col=data.Col;
-            Strengh=data.Strengh;
+            Strength=data.Strength;
             Defence=data.Defence;
             Life=data.Life;
             Range=data.Range;
@@ -56,9 +56,8 @@ namespace Nano
             Faction=data.Faction;
             Speed=data.Speed;
 
-            var moveTo=Map.Instance.BlockSet[Row,Col].transform.position;
+            var moveTo=Map.Instance.BlockSet[Row,Col].Top;
             gameObject.transform.position=moveTo;
-            print(display==null);
             if(display==null){
                 SetSprite();
             }
@@ -70,6 +69,22 @@ namespace Nano
         }
         public void OnSelected(){
             UIHandler.Instance.Select(UIHandler.SelectType.Unit,this);
+            var left=new List<string>{
+                $"Strength {Strength}",
+                $"Defence {Defence}",
+                $"Life {Life}",
+                $"Range {Range}",
+                $"Speed {Speed}",
+                
+            };
+            var right=new List<string>(){
+                $"Relic {RelicID}",
+                $"CanMove {CanMove}",
+                $"CanAttack {CanAttack}",
+                $"Character {Character.ToString()}",
+            };
+            UIController.Instance.SetLeftList(left);
+            UIController.Instance.SetRightList(right);
         }
         public void OnSetAsTarget(){
             // UIHandler.Instance.Target(UIHandler.TargetType.Unit)

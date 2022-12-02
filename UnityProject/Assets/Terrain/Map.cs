@@ -19,8 +19,6 @@ namespace Nano
         [SerializeField]
         private GameObject emptyPrefab;
 
-        public float f=10;
-
         public int RowCount
         {
             get => BlockSet.GetLength(0);
@@ -38,27 +36,6 @@ namespace Nano
             Instance=this;
         }
 
-        public void TestNetUpdate()
-        {
-            ServerSetMap args = new();
-            args.Blocks = new NetBlock[40 * 20];
-            args.Row = 40;
-            args.Col = 20;
-            for (int i = 0; i < 40; i++)
-            {
-                for (int j = 0; j < 20; j++)
-                {
-                    args.Blocks[i * 20 + j] = new NetBlock
-                    {
-                        Row = i,
-                        Col = j,
-                        Type = (BlockType)Random.Range(0, 5),
-                    };
-                }
-            }
-            NetUpdate(args);
-        }
-
         // Update is called once per frame
         void Update()
         {
@@ -70,9 +47,7 @@ namespace Nano
 
         private Vector3 GetPosition(int row, int col, float height)
         {
-            float sqrt3 = (float)System.Math.Sqrt(3);
-            float colShift = row % 2 == 0 ? 0 : UnitLength * 1.5f;
-            return new Vector3(sqrt3 * UnitLength * row / 2, height, col * UnitLength * 3 + colShift);
+            return new Vector3(UnitLength*row, height, col * UnitLength);
         }
 
         public void NetUpdate(ServerSetMap args)
@@ -96,8 +71,8 @@ namespace Nano
 
         private Block CreateBlock(GameObject prefab, int row, int col, float height)
         {
-            var instance = Instantiate(prefab, GetPosition(row, col, height), Quaternion.identity);
-            instance.transform.RotateAround(instance.transform.position, Vector3.up, 60f*Random.Range(0,6));
+            var instance = Instantiate(prefab, GetPosition(row, col, 0), Quaternion.identity);
+            instance.transform.RotateAround(instance.transform.position, Vector3.up, 90f*Random.Range(0,4));
             instance.transform.SetParent(gameObject.transform);
             var block = instance.AddComponent<Block>();
             block.Init(row, col);
