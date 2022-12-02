@@ -75,7 +75,6 @@ namespace Nano
                 $"Life {Life}",
                 $"Range {Range}",
                 $"Speed {Speed}",
-                
             };
             var right=new List<string>(){
                 $"Relic {RelicID}",
@@ -85,6 +84,7 @@ namespace Nano
             };
             UIController.Instance.SetLeftList(left);
             UIController.Instance.SetRightList(right);
+            UIController.Instance.SetBar(Character.ToString());
         }
         public void OnSetAsTarget(){
             // UIHandler.Instance.Target(UIHandler.TargetType.Unit)

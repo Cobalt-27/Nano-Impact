@@ -51,4 +51,8 @@ namespace Nano
     {
 
     }
+    class NetRollback : INetMessage
+    {
+        
+    }
 }
