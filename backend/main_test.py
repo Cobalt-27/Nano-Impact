@@ -53,6 +53,8 @@ async def handle(ws, type, data):
         # data_json = json.loads(data)
         # unit = game.handle_upgrade(data_json['ID'])
         # await send(ws, 'ServerSetUnits', json.dumps([unit]))
+    if type== 'NetMove':
+        game.handle_move(d['ID'],d['Row'],d['Col'])
     for type,content in game.getbuf():
         await send(ws,type,content)
 

@@ -2248,7 +2248,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1995684077}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 27.498005, y: -41.38914, z: 9.311416}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2286,6 +2286,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d6c1fa366afa8164e92a8562818193e8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Statue: {fileID: 0}
+  Church: {fileID: 0}
   Skadi: {fileID: 6374020357843597270, guid: a5b940edb1f2ffc4a8a53c3a03e7a1bb, type: 3}
   Amiya: {fileID: 6374020357843597270, guid: a5b940edb1f2ffc4a8a53c3a03e7a1bb, type: 3}
 --- !u!114 &1995684082

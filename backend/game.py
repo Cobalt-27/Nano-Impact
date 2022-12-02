@@ -186,7 +186,7 @@ class Game:
                 and self.units[ID].CanMove:
             self.units[ID].Row = Row
             self.units[ID].Col = Col
-            self.units[ID].CanMove = False
+            # self.units[ID].CanMove = False
 
         self.send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"))
 

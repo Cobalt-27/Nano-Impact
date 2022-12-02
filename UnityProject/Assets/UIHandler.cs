@@ -34,6 +34,8 @@ namespace Nano
         }
         public void Target(TargetType type, Component c)
         {
+            if(selected==null)
+                return;
             print($"targetting {c.gameObject.name} {type} from {selected.name} {selectType}");
             switch(type){
                 case TargetType.Block:
