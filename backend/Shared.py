@@ -22,7 +22,7 @@ class UnitType(Enum):
 
 
 class Faction(Enum):
-    Friendly = 'Friendly'
+    Friendly = 'Blue'
     Neutral = 'Neutral'
-    Hostile = 'Hostile'
+    Hostile = 'Red'
 

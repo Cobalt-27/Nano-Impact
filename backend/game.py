@@ -76,8 +76,9 @@ class NetUnit:
              "Range": self.Range, "Speed": self.Speed, "Exp": self.Exp, "Level": self.Level, "Element": self.Element,
              "RelicID": self.RelicID, "CanMove": self.CanMove, "CanAttack": self.CanAttack,
              "Faction": self.Faction, "Type": self.Type}
-
         return p
+    
+    
 
 
 class NetRelic:

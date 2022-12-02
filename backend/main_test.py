@@ -20,8 +20,9 @@ async def nethandle(websocket, path):
             print('@', type)
             print('<', data)
             await handle(websocket, type, data)
-    except:
-        print('connection closed')
+    except Exception as e:
+        print(repr(e))
+        # print('connection closed')
 
 
 def genmap(row, col) -> dict:
@@ -53,6 +54,10 @@ async def handle(ws, type, data):
         # data_json = json.loads(data)
         # unit = game.handle_upgrade(data_json['ID'])
         # await send(ws, 'ServerSetUnits', json.dumps([unit]))
+    if type == 'NetEndRound':
+        game.handle_endRound()
+    if type =='NetInteract':
+        game.handle_interact(id['From'],id['To'])
     if type== 'NetMove':
         game.handle_move(d['ID'],d['Row'],d['Col'])
     for type,content in game.getbuf():
