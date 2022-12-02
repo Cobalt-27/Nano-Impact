@@ -1,5 +1,4 @@
 import json
-import random
 from Shared import *
 
 
@@ -47,6 +46,7 @@ class NetUnit:
     Type = None
     Row, Col = 0, 0
     Strength, Defence, Life, Range = 0, 0, 0, 0
+    Speed = 0
     Exp, Level = 0, 0
     Element = 0
     RelicID = None
@@ -55,7 +55,7 @@ class NetUnit:
 
     # TODO: 射程和移动需要区分一下
 
-    def __init__(self, ID, Character, Faction, Strength, Defence, Life, Range, Type, Row, Col):
+    def __init__(self, ID, Character, Faction, Strength, Defence, Life, Range, Speed, Type, Row, Col):
         self.ID = ID
         self.Faction = Faction
         self.Character = Character
@@ -64,6 +64,7 @@ class NetUnit:
         self.Defence = Defence
         self.Life = Life
         self.Range = Range
+        self.Speed = Speed
         self.Type = Type
 
         self.Row = Row
@@ -72,7 +73,7 @@ class NetUnit:
     def package(self) -> dict:
         p = {"ID": self.ID, "Character": self.Character, "Row": self.Row, "Col": self.Col,
              "Strength": self.Strength, "Defence": self.Defence, "Life": self.Life,
-             "Range": self.Range, "Exp": self.Exp, "Level": self.Level, "Element": self.Element,
+             "Range": self.Range, "Speed": self.Speed, "Exp": self.Exp, "Level": self.Level, "Element": self.Element,
              "RelicID": self.RelicID, "CanMove": self.CanMove, "CanAttack": self.CanAttack,
              "Faction": self.Faction, "Type": self.Type}
 
@@ -127,7 +128,7 @@ class Game:
         self.units = {}
         self.buildings = {}
         self.relics = {}
-        self.map={}
+        self.map = {}
         self.player = True
         self.toSend = []
 
@@ -141,7 +142,7 @@ class Game:
         self.units = {}
         for i in units["Units"]:
             a = NetUnit(i["ID"], i["Character"], i["Faction"], i["Strength"], i["Defence"], i["Life"], i["Range"],
-                        i["Type"], i["Row"], i["Col"])
+                        i["Speed"], i["Type"], i["Row"], i["Col"])
             self.units[a.ID] = a
         self.send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"))
 
@@ -167,7 +168,7 @@ class Game:
         attacker = self.units[From]
         defender = self.units[To]
         if (attacker.Row - defender.Row) ** 2 + (attacker.Col - defender.Col) ** 2 <= attacker.Range ** 2 \
-                and attacker.CanAttack and attacker.Faction == "Friendly" and defender.Faction == "Hostile":
+                and attacker.CanAttack and self.checkFaction(attacker) and not self.checkFaction(defender):
             attacker.CanAttack = False
             if attacker.Strength - defender.Defence > 0:
                 defender.Life -= (attacker.Strength - defender.Defence)
@@ -182,11 +183,11 @@ class Game:
         self.send(OperationType.ServerEndGame.value, True)
 
     def handle_move(self, ID: str, Row: int, Col: int):
-        if (self.units[ID].Row - Row) ** 2 + (self.units[ID].Col - Col) ** 2 <= self.units[ID].Range ** 2 \
-                and self.units[ID].CanMove:
+        if (self.units[ID].Row - Row) ** 2 + (self.units[ID].Col - Col) ** 2 <= self.units[ID].Speed ** 2 \
+                and self.units[ID].CanMove and self.checkFaction(self.units[ID]):
             self.units[ID].Row = Row
             self.units[ID].Col = Col
-            # self.units[ID].CanMove = False
+            self.units[ID].CanMove = False
 
         self.send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"))
 
@@ -204,6 +205,11 @@ class Game:
 
     def handle_endRound(self):
         self.player = not self.player  # TODO: 交换阵营
+        for i in self.units:
+            if self.checkFaction(self.units[i]):
+                self.units[i].CanMove = True
+                self.units[i].CanAttack = True
+        self.send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"))
 
     def handle_save(self, Name: str):
         with open("Saving/" + Name, 'w') as f:
@@ -249,19 +255,25 @@ class Game:
         self.toSend.append((type, value))
 
     def clearbuf(self):
-        self.toSend=[]
+        self.toSend = []
 
     def getbuf(self):
         return self.toSend
+
+    def checkFaction(self, unit):
+        if (unit.Faction == "Friendly" and self.player) or (unit.Faction == "Hostile" and not self.player):
+            return True
+        else:
+            return False
 
 
 if __name__ == '__main__':
     g = Game()
     g.restart("default.txt")
-
-    g2 = Game()
-    g2.restart("default.txt")
-    print(g2.toSend)
-
-
-
+    g.handle_move("C1", 3, 3)
+    g.handle_interact("C1", "C2")
+    g.handle_endRound()
+    g.handle_endRound()
+    g.handle_interact("C1", "C2")
+    for i in g.toSend:
+        print(i[0], ">", i[1])
