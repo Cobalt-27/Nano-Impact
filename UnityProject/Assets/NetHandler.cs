@@ -18,9 +18,10 @@ namespace Nano
         private GameObject buildingPrefab;
         public List<string> MessageList;
         // Start is called before the first frame update
+        private GameObject supervisedRoot;
         void Start()
         {
-
+            supervisedRoot=new GameObject("Supervised");
         }
 
         // Update is called once per frame
@@ -49,7 +50,7 @@ namespace Nano
                     mapInstance.GetComponent<Map>().NetUpdate(To<ServerSetMap>(json));
                     break;
                 case "ServerSetUnits":
-                    // OnSetUnits(To<ServerSetUnits>(json));
+                    OnSetUnits(To<ServerSetUnits>(json));
                     break;
                 case "ServerSetRelics":
                     // OnSetRelics(To<ServerSetRelics>(json));
@@ -83,6 +84,7 @@ namespace Nano
             {
                 var o = Instantiate(prefab, Vector3.zero, Quaternion.identity);
                 o.name = name;
+                o.transform.SetParent(supervisedRoot.transform);
                 inited.Add(o);
             }
             return inited;
@@ -93,6 +95,10 @@ namespace Nano
             var names = args.Units.Select(u => u.ID);
             Remove(Main.UnitTag, names);
             CreateIfNeeded(tag, names, unitPrefab);
+            foreach (var u in args.Units)
+            {
+                GameObject.Find(u.ID).GetComponent<Unit>().NetUpdate(u);
+            }
         }
         private void OnSetRelics(ServerSetRelics args)
         {

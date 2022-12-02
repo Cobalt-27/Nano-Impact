@@ -10,7 +10,7 @@ namespace Nano
     }
     public enum Character
     {
-        Nahida, Amber
+        Skadi,Amiya
     }
     public enum UnitType
     {

@@ -16,6 +16,7 @@ namespace Nano
         private GameObject mountainsPrefab;
         [SerializeField]
         private GameObject desertPrefab;
+        [SerializeField]
         private GameObject emptyPrefab;
 
         public float f=10;
@@ -33,8 +34,8 @@ namespace Nano
         // Start is called before the first frame update
         void Start()
         {
+            gameObject.tag=Main.MapTag;
             Instance=this;
-            emptyPrefab=new GameObject();
         }
 
         public void TestNetUpdate()

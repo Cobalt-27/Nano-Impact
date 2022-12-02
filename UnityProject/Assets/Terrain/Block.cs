@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,6 +9,10 @@ namespace Nano
     {
         public int Row { get; private set; }
         public int Col { get; private set; }
+        public Nano.Unit Unit
+        {
+            get => Nano.Unit.AllUnitScripts.FirstOrDefault(u => u.Row == Row && u.Col == Col);
+        }
         // Start is called before the first frame update
         void Start()
         {
@@ -17,7 +22,8 @@ namespace Nano
                 var mesh = obj.GetComponent<MeshFilter>().sharedMesh;
                 obj.AddComponent<MeshCollider>().sharedMesh = mesh;
                 var listener = obj.AddComponent<MouseListener>();
-                listener.Init(onClick);
+                listener.Left = OnLeftClick;
+                listener.Right = OnRightClick;
             }
         }
 
@@ -27,15 +33,23 @@ namespace Nano
             Col = col;
         }
 
-        public void onClick()
+        void OnLeftClick()
         {
-            print($"click on block ({Row},{Col})");
+            print($"left clicking {Row} {Col}");
+            Unit?.OnSelected();
         }
+
+        void OnRightClick()
+        {
+            print($"right clicking {Row} {Col}");
+            UIHandler.Instance.Target(UIHandler.TargetType.Block, this);
+        }
+
 
         // Update is called once per frame
         void Update()
         {
-            
+
         }
     }
 }

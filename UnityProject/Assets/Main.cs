@@ -19,10 +19,13 @@ namespace Nano
         private NetHandler handler;
         public readonly string IP = "localhost";
         public readonly int port = 7777;
-        public readonly string MapTag="Map";
+        #region Tags
+        public static readonly string MapTag="Map";
         public static readonly string UnitTag="Unit";
         public static readonly string BuildingTag="Building";
         public static readonly string RelicTag="Relic";
+        #endregion
+
         // Start is called before the first frame update
         void Start()
         {
@@ -54,7 +57,7 @@ namespace Nano
             }
         }
 
-        void NetSend<T>(T data)
+        public void NetSend<T>(T data)
         {
             if (Connected)
             {
@@ -69,7 +72,7 @@ namespace Nano
         // Update is called once per frame
         void Update()
         {
-
+            
             if (Connected)
             {
                 if (Input.GetKeyDown(KeyCode.O))

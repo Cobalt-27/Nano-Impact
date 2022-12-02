@@ -21,7 +21,7 @@ namespace Nano
         // Start is called before the first frame update
         void Start()
         {
-            
+            gameObject.tag=Main.BuildingTag;
         }
         public void NetUpdate(NetBuilding data){
             var pos=Map.Instance.BlockSet[data.Row,data.Col].transform.position;
