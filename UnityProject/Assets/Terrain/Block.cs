@@ -1,3 +1,5 @@
+using System;
+using System.Data;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,8 +9,12 @@ namespace Nano
 {
     public class Block : MonoBehaviour
     {
+        public static IEnumerable<Block> AllBlockScripts=>GameObject.FindObjectsOfType<Block>();
+        public GameObject Overlay;
+        public bool EnableOverlay;
         public int Row { get; private set; }
         public int Col { get; private set; }
+        public BlockType BlockType{get;private set;}
         public Vector3 Top{
             get=>gameObject.transform.Find("Top").transform.position;
         }
@@ -30,12 +36,14 @@ namespace Nano
                 listener.Left = OnLeftClick;
                 listener.Right = OnRightClick;
             }
+
         }
 
-        public void Init(int row, int col)
+        public void Init(int row, int col,BlockType type)
         {
             Row = row;
             Col = col;
+            BlockType=type;
         }
 
         void OnLeftClick()
@@ -54,7 +62,8 @@ namespace Nano
         // Update is called once per frame
         void Update()
         {
-
+            if(BlockType!=BlockType.Empty)
+                Overlay.SetActive(EnableOverlay);
         }
     }
 }

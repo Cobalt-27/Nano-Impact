@@ -5,10 +5,11 @@ namespace Nano
 {
     public class MainPanel : MonoBehaviour
     {
+        private Animator animator=>gameObject.GetComponent<Animator>();
         // Start is called before the first frame update
         void Start()
         {
-
+            animator.SetBool("MainClose", true);
         }
 
         // Update is called once per frame
@@ -16,8 +17,7 @@ namespace Nano
         {
             if (Input.GetKeyDown(KeyCode.Tab))
             {
-                var animator = gameObject.GetComponent<Animator>();
-                animator.SetBool("MainOpen", !animator.GetBool("MainOpen"));
+                animator.SetBool("MainClose", !animator.GetBool("MainClose"));
             }
         }
     }
