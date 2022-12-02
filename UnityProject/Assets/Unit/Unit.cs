@@ -15,6 +15,7 @@ namespace Nano
         public int Defence{get;private set;}
         public int Life{get;private set;}
         public int Range{get;private set;}
+        public int Speed{get;private set;}
         public int Exp{get;private set;}
         public bool CanMove{get;private set;}
         public bool CanAttack{get;private set;}
@@ -53,6 +54,7 @@ namespace Nano
             CanAttack=data.CanAttack;
             RelicID=data.RelicID;
             Faction=data.Faction;
+            Speed=data.Speed;
 
             var moveTo=Map.Instance.BlockSet[Row,Col].transform.position;
             gameObject.transform.position=moveTo;
