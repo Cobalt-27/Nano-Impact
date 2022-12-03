@@ -6,11 +6,11 @@ namespace Nano
 {
     public interface INetMessage
     {
-
+        
     }
     public enum Character
     {
-        Skadi,Amiya
+        Skadi, Amiya
     }
     public enum UnitType
     {
@@ -34,6 +34,6 @@ namespace Nano
     }
     public enum RelicType
     {
-        R0, R1
+        Flower, Plume, Sands, Goblet, Circlet
     }
 }

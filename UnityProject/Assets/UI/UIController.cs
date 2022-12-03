@@ -16,48 +16,74 @@ namespace Nano
         [SerializeField]
         private GameObject title;
         [SerializeField]
-        private GameObject barText;
+        private GameObject barTextInstance;
+        private string barContent;
+        private string barContentTemp;
+        private int clearBarCounter;
         public static UIController Instance;
         // Start is called before the first frame update
         void Start()
         {
-            Instance=this;
+            Instance = this;
         }
 
         // Update is called once per frame
         void Update()
         {
-            
+            var com = barTextInstance.GetComponent<TextMeshProUGUI>();
+            if (barContentTemp != null)
+            {
+                com.text = barContentTemp;
+                clearBarCounter++;
+                if (clearBarCounter % 5 == 0)
+                    barContentTemp = null;
+            }
+            else
+            {
+                com.text = barContent;
+            }
         }
-        public void SetLowerBar(string content){
+        public void SetLowerBar(string content)
+        {
 
         }
-        public void SetImage(string path){
+        public void SetImage(string path)
+        {
 
         }
-        public void SetLeftList(IEnumerable<string> content){
-            SetList(leftList,content);
+        public void SetLeftList(IEnumerable<string> content)
+        {
+            SetList(leftList, content);
         }
-        public void SetRightList(IEnumerable<string> content){
-            SetList(rightList,content);
+        public void SetRightList(IEnumerable<string> content)
+        {
+            SetList(rightList, content);
         }
-        private void SetList(GameObject list,IEnumerable<string> content){
-            foreach(Transform child in list.transform){
+        private void SetList(GameObject list, IEnumerable<string> content)
+        {
+            foreach (Transform child in list.transform)
+            {
                 Destroy(child.gameObject);
             }
             foreach (var s in content)
             {
-                
-                var instance=Instantiate(buttonPrefab,Vector3.zero,Quaternion.identity);
-                instance.transform.Find("ButtonText").GetComponent<TextMeshProUGUI>().text=s;
+
+                var instance = Instantiate(buttonPrefab, Vector3.zero, Quaternion.identity);
+                instance.transform.Find("ButtonText").GetComponent<TextMeshProUGUI>().text = s;
                 instance.transform.SetParent(list.transform);
             }
         }
-        public void SetTitle(string s){
-            title.GetComponent<TextMeshProUGUI>().text=s;
+        public void SetTitle(string s)
+        {
+            title.GetComponent<TextMeshProUGUI>().text = s;
         }
-        public void SetBar(string s){
-            barText.GetComponent<TextMeshProUGUI>().text=s;
+        public void SetBar(string s)
+        {
+            barContent = s;
+        }
+        public void SetBarTemperary(string s)
+        {
+            barContentTemp = s;
         }
     }
 }

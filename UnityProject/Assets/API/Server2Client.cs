@@ -5,12 +5,11 @@ namespace Nano
 {
     public class NetUnit
     {
-        // int row, col, strength, defence, life, range, exp, element, level;
         public string ID;
         public Character Character;
         public UnitType Type;
         public int Row, Col;
-        public int Strength, Defence, Life, Range,Speed;
+        public int Strength, Defence, Life, Range, Speed;
         public int Exp;
         public bool CanMove, CanAttack;
         public string RelicID;
@@ -34,6 +33,11 @@ namespace Nano
         public string ID;
         public RelicType Type;
     }
+
+    public class NetSaveInfo
+    {
+        public string Name;
+    }
     public class ServerEndGame : INetMessage
     {
         public bool Win;
@@ -47,10 +51,6 @@ namespace Nano
     {
         public NetUnit[] Units;
     }
-    public class ServerSetRelics : INetMessage
-    {
-        public NetRelic[] Relics;
-    }
     public class ServerSetBuildings : INetMessage
     {
         public NetBuilding[] Buildings;
@@ -60,5 +60,9 @@ namespace Nano
     {
         public string content;
     }
-    //not used
+
+    public class NetSetSaveInfo : INetMessage
+    {
+        public NetSaveInfo[] SaveInfoList;
+    }
 }

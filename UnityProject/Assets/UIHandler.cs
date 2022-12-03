@@ -8,10 +8,7 @@ namespace Nano
 {
     public class UIHandler : MonoBehaviour
     {
-
         public static UIHandler Instance;
-
-
         public enum SelectType
         {
             Empty,
@@ -37,7 +34,10 @@ namespace Nano
         public void Target(TargetType type, Component c)
         {
             if (selected == null)
+            {
+                print("select an object first");
                 return;
+            }
             print($"targetting {c.gameObject.name} {type} from {selected.name} {selectType}");
             switch (type)
             {
@@ -92,22 +92,37 @@ namespace Nano
                 );
                 if (Input.GetKey(KeyCode.A))
                 {
-                    Block.AllBlockScripts
-                        .Where(b => b.Unit != null && Main.Distance(b.Unit.Row, b.Unit.Col, unit.Row, unit.Col) <= unit.Range)
-                        .ToList().ForEach(b => b.EnableOverlay = true);
+                    UIController.Instance.SetBarTemperary("Valid Target(s)");
+                    Unit.All
+                        .Where(u => u != unit && Main.Distance(u.Row, u.Col, unit.Row, unit.Col) <= unit.Range)
+                        .ToList().ForEach(u => u.Block.EnableOverlay = true);
                 }
                 else if (Input.GetKey(KeyCode.S))
                 {
-                    Block.AllBlockScripts
+                    UIController.Instance.SetBarTemperary("Reachable");
+                    Block.All
                         .Where(b => b.Unit == null && Main.Distance(b.Row, b.Col, unit.Row, unit.Col) <= unit.Speed)
                         .ToList().ForEach(b => b.EnableOverlay = true);
                 }
-                else
+                else if (Input.GetKey(KeyCode.D))
                 {
-                    if (unit != null)
-                        GameObject.FindObjectsOfType<Block>()
-                            .First(b => b.Col == unit.Col && b.Row == unit.Row).EnableOverlay = true;
+                    UIController.Instance.SetBarTemperary("Move");
+                    Unit.All
+                        .Where(u => u.CanMove)
+                        .ToList().ForEach(u => u.Block.EnableOverlay = true);
                 }
+                else if (Input.GetKey(KeyCode.F))
+                {
+                    UIController.Instance.SetBarTemperary("Attack");
+                    Unit.All
+                        .Where(u => u.CanAttack)
+                        .ToList().ForEach(u => u.Block.EnableOverlay = true);
+                }
+                else if (unit != null)
+                {
+                    unit.Block.EnableOverlay = true;
+                }
+
             }
         }
     }

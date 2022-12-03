@@ -135,7 +135,7 @@ GameObject:
   - component: {fileID: 290200550}
   - component: {fileID: 290200549}
   m_Layer: 5
-  m_Name: Panel
+  m_Name: Bar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -160,7 +160,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
   m_AnchoredPosition: {x: -0.000028372, y: 64.026}
-  m_SizeDelta: {x: 493.2549, y: 128.0527}
+  m_SizeDelta: {x: 600, y: 128.0527}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &290200549
 MonoBehaviour:
@@ -277,14 +277,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
-  m_LocalRotation: {x: -0.6532815, y: -0.27059805, z: 0.6532815, w: -0.27059805}
+  m_LocalRotation: {x: 0.3535534, y: -0.61237246, z: 0.3535534, w: 0.61237246}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 509846535}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 45, y: -90, z: 180}
+  m_LocalEulerAnglesHint: {x: 60, y: -90, z: 0}
 --- !u!114 &330585547
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -580,7 +580,7 @@ MonoBehaviour:
   dragSpeed: 0.02
   scaleSpeed: 4
   minHeight: 3
-  maxHeight: 12
+  maxHeight: 15
   smoothing: 0.5
   rotateSpeed: 1
 --- !u!4 &509846535
@@ -1001,7 +1001,9 @@ MonoBehaviour:
     type: 3}
   desertPrefab: {fileID: 3706901530423728309, guid: d380736ee34bc3b47a1b840b3301ea46,
     type: 3}
-  emptyPrefab: {fileID: 2622367234811543008, guid: aace97fc68d5a37419345c302f5ec105,
+  emptyPrefab: {fileID: 4517081748452191681, guid: aace97fc68d5a37419345c302f5ec105,
+    type: 3}
+  overlayPrefab: {fileID: 4473846941807999128, guid: 45a0351ecfc7cdf4baffcf4b5d962b8e,
     type: 3}
   UnitLength: 2
 --- !u!1 &1337187286
@@ -1234,8 +1236,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1394703614}
   m_LocalRotation: {x: 0, y: -0.008726465, z: 0, w: 0.999962}
-  m_LocalPosition: {x: -22.17831, y: 43.85, z: 11.301939}
-  m_LocalScale: {x: 15, y: 2, z: 15}
+  m_LocalPosition: {x: -30, y: 43.85, z: -10}
+  m_LocalScale: {x: 10, y: 1, z: 10}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2007361416}
@@ -2075,7 +2077,7 @@ MonoBehaviour:
   leftList: {fileID: 1337187286}
   rightList: {fileID: 1706620422}
   title: {fileID: 1411256449}
-  barText: {fileID: 1837994190}
+  barTextInstance: {fileID: 1837994190}
 --- !u!1 &2007361415
 GameObject:
   m_ObjectHideFlags: 0

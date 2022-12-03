@@ -3,6 +3,10 @@ using System.Collections.Generic;
 
 namespace Nano
 {
+    class NetGreet : INetMessage
+    {
+
+    }
     public class ServerPrint : INetMessage
     {
         public string content;
@@ -39,7 +43,7 @@ namespace Nano
 
     class NetEndRound : INetMessage
     {
-        
+
     }
 
     class NetSave : INetMessage
@@ -53,6 +57,14 @@ namespace Nano
     }
     class NetRollback : INetMessage
     {
-        
+
+    }
+    class NetRequestSaveInfo : INetMessage
+    {
+
+    }
+    class NetSelectSave : INetMessage
+    {
+        public string Name;
     }
 }
