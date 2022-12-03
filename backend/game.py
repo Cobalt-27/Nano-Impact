@@ -1,5 +1,5 @@
 import json
-from Shared import *
+from Relic import *
 
 
 class NetBlock:
@@ -55,7 +55,8 @@ class NetUnit:
 
     # TODO: 射程和移动需要区分一下
 
-    def __init__(self, ID, Character, Faction, Strength, Defence, Life, Range, Speed, Type, Row, Col):
+    def __init__(self, ID, Character, Faction, Strength, Defence, Life, Range, Speed, Type, Row, Col, RelicID,
+                 CanMove, CanAttack, Exp, Level):
         self.ID = ID
         self.Faction = Faction
         self.Character = Character
@@ -69,6 +70,12 @@ class NetUnit:
 
         self.Row = Row
         self.Col = Col
+        self.RelicID = RelicID
+        self.CanMove = CanMove
+        self.CanAttack = CanAttack
+
+        self.Exp = Exp
+        self.Level = Level
 
     def package(self) -> dict:
         p = {"ID": self.ID, "Character": self.Character, "Row": self.Row, "Col": self.Col,
@@ -77,8 +84,6 @@ class NetUnit:
              "RelicID": self.RelicID, "CanMove": self.CanMove, "CanAttack": self.CanAttack,
              "Faction": self.Faction, "Type": self.Type}
         return p
-    
-    
 
 
 class NetRelic:
@@ -115,14 +120,22 @@ class NetBuilding:
 
 
 class Game:
+    map = None
+    units = {}  # {key: str, value: NetUnit}
+    buildings = {}  # {key: str, value: NetBuilding}
+    relics = {}  # {key: str, value: NetRelic}
+    player = True
+    toSend = []
+    step = 0
 
     def __init__(self):
         self.map = None
         self.units = {}  # {key: str, value: NetUnit}
         self.buildings = {}  # {key: str, value: NetBuilding}
         self.relics = {}  # {key: str, value: NetRelic}
-        self.player = True  # TODO: 判断阵营
+        self.player = True
         self.toSend = []
+        self.step = 0
 
     def restart(self, SaveName):  # 初始化 default
         self.map = None
@@ -132,8 +145,10 @@ class Game:
         self.map = {}
         self.player = True
         self.toSend = []
+        self.step = 0
 
         self.handle_read("Saving/" + SaveName)
+        self.record_for_rollback()
 
     def set_map(self, Row, Col, Blocks):
         self.map = NetMap(Row, Col, Blocks)
@@ -143,7 +158,8 @@ class Game:
         self.units = {}
         for i in units["Units"]:
             a = NetUnit(i["ID"], i["Character"], i["Faction"], i["Strength"], i["Defence"], i["Life"], i["Range"],
-                        i["Speed"], i["Type"], i["Row"], i["Col"])
+                        i["Speed"], i["Type"], i["Row"], i["Col"], i["RelicID"], i["CanMove"], i["CanAttack"],
+                        i["Exp"], i["Level"])
             self.units[a.ID] = a
         self.send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"))
 
@@ -159,11 +175,8 @@ class Game:
         for i in relics["Relics"]:
             b = NetRelic(i["ID"], i["RelicType"])
             self.relics[b.ID] = b
-        self.send(OperationType.ServerSetRelics.value, self.package_list(self.relics, "Relics"))
 
-    def handle_upgrade(self, id: str):  # 角色升级 ID不存在
-        self.units[id].Level += 1
-        self.send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"))
+        self.send(OperationType.ServerSetRelics.value, self.package_list(self.relics, "Relics"))
 
     def handle_interact(self, From: str, To: str):  # 交互
         attacker = self.units[From]
@@ -175,13 +188,33 @@ class Game:
                 defender.Life -= (attacker.Strength - defender.Defence)
             if defender.Life <= 0:
                 self.units.pop(defender.ID)
+                attacker.Level += defender.Level
+                self.LevelUp(attacker, defender.Level)
 
-        self.send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"))
+            self.record_for_rollback()
 
+            self.send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"))
+
+            self.JudegeEnd()
+
+    def LevelUp(self, unit, value):
+        unit.Strength += value
+        unit.Defence += value
+        unit.Life += value
+
+    def JudegeEnd(self):
+        a = True
+        b = True
         for i in self.units:
             if self.units[i].Faction == "Red":
-                return
-        self.send(OperationType.ServerEndGame.value, True)
+                a = False
+            if self.units[i].Faction == "Blue":
+                b = False
+
+        if a is True:
+            return self.send(OperationType.ServerEndGame.value, True)
+        if b is True:
+            return self.send(OperationType.ServerEndGame.value, False)
 
     def handle_move(self, ID: str, Row: int, Col: int):
         if (self.units[ID].Row - Row) ** 2 + (self.units[ID].Col - Col) ** 2 <= self.units[ID].Speed ** 2 \
@@ -190,11 +223,30 @@ class Game:
             self.units[ID].Col = Col
             self.units[ID].CanMove = False
 
-        self.send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"))
+            self.record_for_rollback()
+
+            self.send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"))
 
     def handle_assignRelic(self, ID: str, Relic: str):
-        self.units[ID].relicID = Relic
-        self.send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"))
+        if self.units[ID].RelicID is None:
+            self.units[ID].RelicID = Relic
+            if Relic == "R0":
+                self.assignRelicValue(self.units[ID], RelicType.R0)
+            if Relic == "R1":
+                self.assignRelicValue(self.units[ID], RelicType.R1)
+            if Relic == "R2":
+                self.assignRelicValue(self.units[ID], RelicType.R2)
+
+            self.record_for_rollback()
+
+            self.send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"))
+
+    def assignRelicValue(self, unit, type):
+        unit.Strength += type.value["Strength"]
+        unit.Defence += type.value["Defence"]
+        unit.Life += type.value["Life"]
+        unit.Range += type.value["Range"]
+        unit.Speed += type.value["Speed"]
 
     def handle_addBuilding(self, Type: str, Row: int, Col: int):
         n = len(self.buildings)
@@ -204,13 +256,38 @@ class Game:
         self.buildings[b.ID] = b
         self.send(OperationType.ServerSetBuildings.value, self.package_list(self.buildings, "Buildings"))
 
+    def handle_rollBack(self):
+        print(self.step)
+        if self.step >= 2:
+            with open("RollBack/" + str(self.step - 2), 'r') as f:
+                read = f.read()
+            read = read.split("\n")
+            self.step -= 1
+            character = json.loads(read[0])
+            self.player = bool(read[1])
+            self.set_unit(character)
+
     def handle_endRound(self):
         self.player = not self.player  # TODO: 交换阵营
         for i in self.units:
             if self.checkFaction(self.units[i]):
                 self.units[i].CanMove = True
                 self.units[i].CanAttack = True
+            else:
+                self.units[i].CanMove = False
+                self.units[i].CanAttack = False
+
+        self.record_for_rollback()
+
         self.send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"))
+
+    def record_for_rollback(self):
+        with open("RollBack/" + str(self.step), 'w') as f:
+            f.write(self.package_list(self.units, "Units"))
+            f.write("\n")
+            f.write(str(self.player))
+
+        self.step += 1
 
     def handle_save(self, Name: str):
         with open("Saving/" + Name, 'w') as f:
@@ -276,5 +353,14 @@ if __name__ == '__main__':
     g.handle_endRound()
     g.handle_endRound()
     g.handle_interact("C1", "C2")
+    g.handle_assignRelic("C1", "R1")
+
+    g.handle_rollBack()
+    g.handle_rollBack()
+    g.handle_rollBack()
+    g.handle_rollBack()
+    g.handle_rollBack()
+    g.handle_rollBack()
+
     for i in g.toSend:
         print(i[0], ">", i[1])
