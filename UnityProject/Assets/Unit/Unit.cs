@@ -58,7 +58,7 @@ namespace Nano
             Faction=data.Faction;
             Speed=data.Speed;
 
-            var moveTo=Map.Instance.BlockSet[Row,Col].Top;
+            var moveTo=Block.Top;
             gameObject.transform.position=moveTo;
             if(display==null){
                 SetSprite();

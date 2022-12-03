@@ -15,7 +15,7 @@ namespace Nano
         public int Row { get; private set; }
         public int Col { get; private set; }
         public BlockType BlockType { get; private set; }
-        public Vector3 Top { get; private set; }
+        public Vector3 Top => gameObject.transform.Find(topAnchor).transform.position;
         private readonly string topAnchor = "Top";
         public Nano.Unit Unit
         {
@@ -24,7 +24,6 @@ namespace Nano
         // Start is called before the first frame update
         void Start()
         {
-            Top = gameObject.transform.Find(topAnchor).transform.position;
             foreach (Transform child in gameObject.transform)
             {
                 var obj = child.gameObject;

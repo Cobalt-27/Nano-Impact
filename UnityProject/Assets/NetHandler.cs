@@ -62,6 +62,7 @@ namespace Nano
                 case "ServerEndGame":
                     break;
                 default:
+                    return;
                     throw new NotImplementedException();
             }
         }
