@@ -52,9 +52,6 @@ namespace Nano
                 case "ServerSetUnits":
                     OnSetUnits(To<ServerSetUnits>(json));
                     break;
-                case "ServerSetRelics":
-                    // OnSetRelics(To<ServerSetRelics>(json));
-                    break;
                 case "ServerSetBuildings":
                     OnSetBuildings(To<ServerSetBuildings>(json));
                     break;
@@ -65,6 +62,7 @@ namespace Nano
                 case "ServerEndGame":
                     break;
                 default:
+                    return;
                     throw new NotImplementedException();
             }
         }
@@ -94,24 +92,18 @@ namespace Nano
         {
             var names = args.Units.Select(u => u.ID);
             Remove(Main.UnitTag, names);
-            CreateIfNeeded(tag, names, unitPrefab);
+            CreateIfNeeded(Main.UnitTag, names, unitPrefab);
             foreach (var u in args.Units)
             {
                 GameObject.Find(u.ID).GetComponent<Unit>().NetUpdate(u);
             }
-        }
-        private void OnSetRelics(ServerSetRelics args)
-        {
-            var names = args.Relics.Select(u => u.ID);
-            Remove(Main.RelicTag, names);
-            CreateIfNeeded(tag, names, relicPrefab);
         }
 
         private void OnSetBuildings(ServerSetBuildings args)
         {
             var names = args.Buildings.Select(u => u.ID).ToList();
             Remove(Main.BuildingTag, names);
-            CreateIfNeeded(tag, names, buildingPrefab);
+            CreateIfNeeded(Main.BuildingTag, names, buildingPrefab);
             foreach (var b in args.Buildings)
             {
                 GameObject.Find(b.ID).GetComponent<Building>().NetUpdate(b);

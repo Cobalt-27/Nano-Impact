@@ -1,3 +1,4 @@
+using System;
 using System.Net.NetworkInformation;
 using System.Collections;
 using System.Collections.Generic;
@@ -73,7 +74,9 @@ namespace Nano
                 print("NetSend failed: connection closed");
             }
         }
-
+        public static int Distance(int row0,int col0,int row1,int col1){
+            return Math.Abs(row0-row1)+Math.Abs(col0-col1);
+        }
         // Update is called once per frame
         void Update()
         {

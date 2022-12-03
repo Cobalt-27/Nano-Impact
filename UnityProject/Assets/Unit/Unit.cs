@@ -26,7 +26,9 @@ namespace Nano
         [SerializeField]
         private float yOffset=2.6f;
 
-        public static IEnumerable<Unit> AllUnitScripts=>GameObject.FindGameObjectsWithTag(Main.UnitTag).Select(g=>g.GetComponent<Unit>());
+        public Block Block=>Map.Instance.BlockSet[Row,Col];
+
+        public static IEnumerable<Unit> All=>GameObject.FindObjectsOfType<Unit>();
 
 
         // Start is called before the first frame update
@@ -56,7 +58,7 @@ namespace Nano
             Faction=data.Faction;
             Speed=data.Speed;
 
-            var moveTo=Map.Instance.BlockSet[Row,Col].Top;
+            var moveTo=Block.Top;
             gameObject.transform.position=moveTo;
             if(display==null){
                 SetSprite();
