@@ -1,0 +1,2 @@
+{"Units": [{"ID": "C1", "Character": "Skadi", "Row": 3, "Col": 3, "Strength": 11, "Defence": 11, "Life": 11, "Range": 10, "Speed": 10, "Exp": 0, "Level": 2, "Element": 0, "RelicID": null, "CanMove": true, "CanAttack": false, "Faction": "Blue", "Type": "Melee"}]}
+True
