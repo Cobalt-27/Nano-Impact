@@ -37,10 +37,15 @@ namespace Nano
     public class NetSaveInfo
     {
         public string Name;
+        public string Description;
+    }
+    public class ServerSetFaction : INetMessage
+    {
+        public Faction Faction;
     }
     public class ServerEndGame : INetMessage
     {
-        public bool Win;
+        public Faction Winner;
     }
     public class ServerSetMap : INetMessage
     {

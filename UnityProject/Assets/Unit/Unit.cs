@@ -22,9 +22,11 @@ namespace Nano
         private string RelicID;
         
         public Faction Faction{get;private set;}
-        private GameObject display=null;
+        private GameObject unitSprite=null;
         [SerializeField]
         private float yOffset=2.6f;
+        [SerializeField]
+        private UnitResources unitResources=>GameObject.FindObjectOfType<UnitResources>();
 
         public Block Block=>Map.Instance.BlockSet[Row,Col];
 
@@ -60,14 +62,14 @@ namespace Nano
 
             var moveTo=Block.Top;
             gameObject.transform.position=moveTo;
-            if(display==null){
-                SetSprite();
+            if(unitSprite==null){
+                SetupSprite();
             }
         }
-        private void SetSprite(){
-            var prefab=Resource.Instance.GetCharacterPrefab(Character);
-            display = Instantiate(prefab, gameObject.transform.position+Vector3.up*yOffset, Quaternion.identity);
-            display.transform.SetParent(gameObject.transform);
+        private void SetupSprite(){
+            unitSprite=unitResources.CreateCharacter(Character);
+            unitSprite.transform.position=gameObject.transform.position+Vector3.up*yOffset;
+            unitSprite.transform.SetParent(gameObject.transform);
         }
         public void OnSelected(){
             UIHandler.Instance.Select(UIHandler.SelectType.Unit,this);
