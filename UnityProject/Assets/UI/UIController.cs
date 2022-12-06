@@ -42,6 +42,7 @@ namespace Nano
             {
                 com.text = barContent;
             }
+            
         }
         public void SetLowerBar(string content)
         {

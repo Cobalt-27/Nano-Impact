@@ -10,7 +10,7 @@ namespace Nano
         public UnitType Type;
         public int Row, Col;
         public int Strength, Defence, Life, Range, Speed;
-        public int Exp;
+        public int Level;
         public bool CanMove, CanAttack;
         public string RelicID;
         public Faction Faction;

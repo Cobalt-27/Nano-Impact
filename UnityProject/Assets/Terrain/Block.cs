@@ -24,18 +24,6 @@ namespace Nano
         // Start is called before the first frame update
         void Start()
         {
-            foreach (Transform child in gameObject.transform)
-            {
-                var obj = child.gameObject;
-                if (obj.name == topAnchor)
-                    continue;
-                var mesh = obj.GetComponent<MeshFilter>().sharedMesh;
-                obj.AddComponent<MeshCollider>().sharedMesh = mesh;
-                var listener = obj.AddComponent<MouseListener>();
-                listener.Left = OnLeftClick;
-                listener.Right = OnRightClick;
-            }
-
         }
 
         public void Init(int row, int col, BlockType type)
@@ -43,6 +31,20 @@ namespace Nano
             Row = row;
             Col = col;
             BlockType = type;
+            if (type != BlockType.Empty)
+            {
+                foreach (Transform child in gameObject.transform)
+                {
+                    var obj = child.gameObject;
+                    if (obj.name == topAnchor)
+                        continue;
+                    var mesh = obj.GetComponent<MeshFilter>().sharedMesh;
+                    obj.AddComponent<MeshCollider>().sharedMesh = mesh;
+                    var listener = obj.AddComponent<MouseListener>();
+                    listener.Left = OnLeftClick;
+                    listener.Right = OnRightClick;
+                }
+            }
         }
 
         void OnLeftClick()
@@ -63,7 +65,10 @@ namespace Nano
         void Update()
         {
             if (BlockType != BlockType.Empty)
+            {
                 Overlay.SetActive(EnableOverlay);
+
+            }
         }
     }
 }

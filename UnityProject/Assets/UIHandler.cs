@@ -22,6 +22,11 @@ namespace Nano
         private Component selected = null;
         private SelectType selectType;
 
+        public void DeSelect()
+        {
+            selectType = SelectType.Empty;
+            selected = null;
+        }
         public void Select(SelectType type, Component obj)
         {
             if (obj != selected)
@@ -117,6 +122,9 @@ namespace Nano
                     Unit.All
                         .Where(u => u.CanAttack)
                         .ToList().ForEach(u => u.Block.EnableOverlay = true);
+                }
+                else if(Input.GetKey(KeyCode.I)){
+                    unit.PlayAttackAnim();
                 }
                 else if (unit != null)
                 {

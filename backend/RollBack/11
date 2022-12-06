@@ -1,0 +1,2 @@
+{"Units": [{"ID": "C1", "Character": "Angelina", "Row": 3, "Col": 3, "Strength": 10, "Defence": 10, "Life": 10, "Range": 10, "Speed": 10, "Exp": 0, "Level": 1, "Element": 0, "RelicID": null, "CanMove": false, "CanAttack": false, "Faction": "Blue", "Type": "Melee"}, {"ID": "C2", "Character": "Eyjafjalla", "Row": 5, "Col": 0, "Strength": 1, "Defence": 1, "Life": 10, "Range": 5, "Speed": 10, "Exp": 0, "Level": 1, "Element": 0, "RelicID": null, "CanMove": false, "CanAttack": true, "Faction": "Red", "Type": "Heal"}]}
+False
