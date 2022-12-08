@@ -1,4 +1,7 @@
 import json
+import random
+import time
+
 from Relic import *
 
 
@@ -228,7 +231,7 @@ class Game:
             self.send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"))
 
     def handle_assignRelic(self, ID: str, Relic: str):
-        if self.units[ID].RelicID is None:
+        if self.units[ID].RelicID is None and self.checkFaction(self.units[ID]):
             self.units[ID].RelicID = Relic
             if Relic == "R0":
                 self.assignRelicValue(self.units[ID], RelicType.R0)
@@ -329,8 +332,49 @@ class Game:
             s = json.dumps(d)
         return s
 
-    def send(self, type, value):
-        self.toSend.append((type, value))
+    def AI_Operation(self):
+        my = []
+        op = []
+        for ID in self.units:
+            if self.checkFaction(self.units[ID]):
+                my.append(self.units[ID])
+            else:
+                op.append(self.units[ID])
+        for u_my in my:
+            x = op[0].Row - u_my.Row
+            y = op[0].Col - u_my.Row
+            move_x = (u_my.Speed * x) // ((x ** 2 + y ** 2) ** 0.5) + u_my.Row
+            move_y = (u_my.Speed * y) // ((x ** 2 + y ** 2) ** 0.5) + u_my.Col
+            if x < 0:
+                move_x += 1
+            if y < 0:
+                move_y += 1
+            if self.move_valid(move_x, move_y):
+                self.handle_move(u_my.ID, int(move_x), int(move_y))
+                time.sleep(1)
+            defender = self.attack_valid(u_my, op)
+            if defender is not None:
+                self.handle_interact(u_my.ID, defender.ID)
+                time.sleep(1)
+
+    def attack_valid(self, my, ops):
+        for op in ops:
+            if (op.Row - my.Row) ** 2 + (op.Col - my.Col) ** 2 <= my.Range ** 2:
+                return op
+        return None
+
+    def move_valid(self, row, col):
+        for ID in self.units:
+            if row == self.units[ID].Row and col == self.units[ID].Col:
+                return False
+            if row >= 10 or row < 0 or col >= 10 or col < 0:
+                return False
+
+        return True
+
+    def send(self, type, value, target=-1, delay=0):
+        self.toSend.append((type, value, target, delay))  # -1, 0
+        print(type, ">", value)
 
     def clearbuf(self):
         self.toSend = []
@@ -348,19 +392,10 @@ class Game:
 if __name__ == '__main__':
     g = Game()
     g.restart("default.txt")
-    g.handle_move("C1", 3, 3)
-    g.handle_interact("C1", "C2")
+    g.AI_Operation()
     g.handle_endRound()
+    g.AI_Operation()
     g.handle_endRound()
-    g.handle_interact("C1", "C2")
-    g.handle_assignRelic("C1", "R1")
+    g.AI_Operation()
 
-    g.handle_rollBack()
-    g.handle_rollBack()
-    g.handle_rollBack()
-    g.handle_rollBack()
-    g.handle_rollBack()
-    g.handle_rollBack()
 
-    for i in g.toSend:
-        print(i[0], ">", i[1])
