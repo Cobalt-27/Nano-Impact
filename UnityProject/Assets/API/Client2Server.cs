@@ -5,7 +5,7 @@ namespace Nano
 {
     class NetGreet : INetMessage
     {
-
+        public string ClientName;
     }
     public class ServerPrint : INetMessage
     {
