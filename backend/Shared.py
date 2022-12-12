@@ -7,6 +7,7 @@ class OperationType(Enum):
     ServerSetUnits = 'ServerSetUnits'
     ServerSetRelics = 'ServerSetRelics'
     ServerSetBuildings = 'ServerSetBuildings'
+    ServerSetFaction = 'ServerSetFaction'
     ClientPrint = 'ClientPrint'
 
 

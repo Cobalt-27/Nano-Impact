@@ -1,4 +1,7 @@
 import json
+import random
+import time
+
 from Relic import *
 
 
@@ -127,6 +130,7 @@ class Game:
     player = True
     toSend = []
     step = 0
+    isEnd = False
 
     def __init__(self):
         self.map = None
@@ -136,6 +140,7 @@ class Game:
         self.player = True
         self.toSend = []
         self.step = 0
+        self.isEnd = False
 
     def restart(self, SaveName):  # 初始化 default
         self.map = None
@@ -178,7 +183,7 @@ class Game:
 
         self.send(OperationType.ServerSetRelics.value, self.package_list(self.relics, "Relics"))
 
-    def handle_interact(self, From: str, To: str):  # 交互
+    def handle_interact(self, From: str, To: str, AI=False):  # 交互
         attacker = self.units[From]
         defender = self.units[To]
         if (attacker.Row - defender.Row) ** 2 + (attacker.Col - defender.Col) ** 2 <= attacker.Range ** 2 \
@@ -193,7 +198,13 @@ class Game:
 
             self.record_for_rollback()
 
-            self.send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"))
+            if not AI:
+                print("player", "attack")
+                self.send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"))
+                self.JudgeEndRound()
+            else:
+                print("AI", "attack")
+                self.send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"), -1, 1)
 
             self.JudegeEnd()
 
@@ -216,19 +227,45 @@ class Game:
         if b is True:
             return self.send(OperationType.ServerEndGame.value, False)
 
-    def handle_move(self, ID: str, Row: int, Col: int):
+    def JudgeEndRound(self):
+        my = []
+        op = []
+        for ID in self.units:
+            if self.checkFaction(self.units[ID]):
+                my.append(self.units[ID])
+            else:
+                op.append(self.units[ID])
+        for unit in my:
+            if unit.CanMove:
+                return
+            else:
+                if unit.CanAttack and self.attack_valid(unit, op):
+                    return
+
+        self.handle_endRound()
+
+    def handle_move(self, ID: str, Row: int, Col: int, AI=False):
         if (self.units[ID].Row - Row) ** 2 + (self.units[ID].Col - Col) ** 2 <= self.units[ID].Speed ** 2 \
-                and self.units[ID].CanMove and self.checkFaction(self.units[ID]):
+                and self.units[ID].CanMove and self.checkFaction(self.units[ID]) and self.map.blocks[Row][Col].Type != 4:
+            for i in self.units:
+                if i != ID and self.units[i].Row == Row and self.units[i].Col == Col:
+                    return
+
             self.units[ID].Row = Row
             self.units[ID].Col = Col
             self.units[ID].CanMove = False
 
             self.record_for_rollback()
-
-            self.send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"))
+            if not AI:
+                print("player", "move")
+                self.send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"))
+                self.JudgeEndRound()
+            else:
+                print("AI", "move")
+                self.send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"), -1, 1)
 
     def handle_assignRelic(self, ID: str, Relic: str):
-        if self.units[ID].RelicID is None:
+        if self.units[ID].RelicID is None and self.checkFaction(self.units[ID]):
             self.units[ID].RelicID = Relic
             if Relic == "R0":
                 self.assignRelicValue(self.units[ID], RelicType.R0)
@@ -267,7 +304,7 @@ class Game:
             self.player = bool(read[1])
             self.set_unit(character)
 
-    def handle_endRound(self):
+    def handle_endRound(self, AI=False):
         self.player = not self.player  # TODO: 交换阵营
         for i in self.units:
             if self.checkFaction(self.units[i]):
@@ -278,8 +315,12 @@ class Game:
                 self.units[i].CanAttack = False
 
         self.record_for_rollback()
-
-        self.send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"))
+        if not AI:
+            print("player", "end round")
+            self.send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"))
+        else:
+            print("AI", "end round")
+            self.send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"), -1, 1)
 
     def record_for_rollback(self):
         with open("RollBack/" + str(self.step), 'w') as f:
@@ -329,8 +370,52 @@ class Game:
             s = json.dumps(d)
         return s
 
-    def send(self, type, value):
-        self.toSend.append((type, value))
+    def AI_Operation(self):
+        my = []
+        op = []
+        for ID in self.units:
+            if self.checkFaction(self.units[ID]):
+                my.append(self.units[ID])
+            else:
+                op.append(self.units[ID])
+        for u_my in my:
+            x = op[0].Row - u_my.Row
+            y = op[0].Col - u_my.Row
+            move_x = (u_my.Speed * x) // ((x ** 2 + y ** 2) ** 0.5) + u_my.Row
+            move_y = (u_my.Speed * y) // ((x ** 2 + y ** 2) ** 0.5) + u_my.Col
+            if x < 0:
+                move_x += 1
+            if y < 0:
+                move_y += 1
+            if self.move_valid(move_x, move_y):
+                self.handle_move(u_my.ID, int(move_x), int(move_y), True)
+            defender = self.attack_valid(u_my, op)
+            if defender is not None:
+                self.handle_interact(u_my.ID, defender.ID, True)
+
+        self.handle_endRound(True)
+
+    def attack_valid(self, my, ops):
+        for op in ops:
+            if (op.Row - my.Row) ** 2 + (op.Col - my.Col) ** 2 <= my.Range ** 2:
+                return op
+        return None
+
+    def move_valid(self, row, col):
+        for ID in self.units:
+            if row == self.units[ID].Row and col == self.units[ID].Col:
+                return False
+            if row >= 10 or row < 0 or col >= 10 or col < 0:
+                return False
+
+        return True
+
+    def send(self, type, value, target=-1, delay=0):
+        if self.isEnd is not True:
+            self.toSend.append((type, value, target, delay))  # -1, 0
+            print(type, ">", value, target, delay)
+        if type == OperationType.ServerEndGame.value:
+            self.isEnd = True
 
     def clearbuf(self):
         self.toSend = []
@@ -348,19 +433,8 @@ class Game:
 if __name__ == '__main__':
     g = Game()
     g.restart("default.txt")
-    g.handle_move("C1", 3, 3)
+    g.handle_move("C1", 2, 2)
     g.handle_interact("C1", "C2")
-    g.handle_endRound()
-    g.handle_endRound()
-    g.handle_interact("C1", "C2")
-    g.handle_assignRelic("C1", "R1")
+    g.handle_move("C2", 7, 7)
 
-    g.handle_rollBack()
-    g.handle_rollBack()
-    g.handle_rollBack()
-    g.handle_rollBack()
-    g.handle_rollBack()
-    g.handle_rollBack()
 
-    for i in g.toSend:
-        print(i[0], ">", i[1])
