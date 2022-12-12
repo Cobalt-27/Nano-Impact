@@ -59,10 +59,6 @@ namespace Nano
     {
 
     }
-    class NetRequestSaveInfo : INetMessage
-    {
-
-    }
     class NetSelectSave : INetMessage
     {
         public string Name;
