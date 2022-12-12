@@ -70,4 +70,11 @@ namespace Nano
     {
         public NetSaveInfo[] SaveInfoList;
     }
+    public class NetPlayAttack : INetMessage
+    {
+        string ID;
+    }
+    public class NetPlaySound : INetMessage{
+        string Name;
+    }
 }
