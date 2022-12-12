@@ -67,4 +67,6 @@ namespace Nano
     {
         public string Name;
     }
+    class Test
+    {}
 }
