@@ -130,6 +130,7 @@ class Game:
     player = True
     toSend = []
     step = 0
+    isEnd = False
 
     def __init__(self):
         self.map = None
@@ -139,6 +140,7 @@ class Game:
         self.player = True
         self.toSend = []
         self.step = 0
+        self.isEnd = False
 
     def restart(self, SaveName):  # 初始化 default
         self.map = None
@@ -197,8 +199,10 @@ class Game:
             self.record_for_rollback()
 
             if not AI:
+                print("player", "attack")
                 self.send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"))
             else:
+                print("AI", "attack")
                 self.send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"), -1, 1)
 
             self.JudegeEnd()
@@ -231,8 +235,10 @@ class Game:
 
             self.record_for_rollback()
             if not AI:
+                print("player", "move")
                 self.send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"))
             else:
+                print("AI", "move")
                 self.send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"), -1, 1)
 
     def handle_assignRelic(self, ID: str, Relic: str):
@@ -287,8 +293,10 @@ class Game:
 
         self.record_for_rollback()
         if not AI:
+            print("player", "end round")
             self.send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"))
         else:
+            print("AI", "end round")
             self.send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"), -1, 1)
 
     def record_for_rollback(self):
@@ -380,8 +388,11 @@ class Game:
         return True
 
     def send(self, type, value, target=-1, delay=0):
-        self.toSend.append((type, value, target, delay))  # -1, 0
-        print(type, ">", value, target, delay)
+        if self.isEnd is not True:
+            self.toSend.append((type, value, target, delay))  # -1, 0
+            print(type, ">", value, target, delay)
+        if type == OperationType.ServerEndGame.value:
+            self.isEnd = True
 
     def clearbuf(self):
         self.toSend = []
