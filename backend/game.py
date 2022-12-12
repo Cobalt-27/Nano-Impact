@@ -200,13 +200,16 @@ class Game:
 
             if not AI:
                 print("player", "attack")
+                self.send(OperationType.NetPlayAttack.value, From, -1, 0)
                 self.send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"))
                 self.JudgeEndRound()
             else:
                 print("AI", "attack")
+                self.send(OperationType.NetPlayAttack.value, From, -1, 1)
                 self.send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"), -1, 1)
 
             self.JudegeEnd()
+
 
     def LevelUp(self, unit, value):
         unit.Strength += value
@@ -223,9 +226,9 @@ class Game:
                 b = False
 
         if a is True:
-            return self.send(OperationType.ServerEndGame.value, True)
+            return self.send(OperationType.ServerEndGame.value, "Blue")
         if b is True:
-            return self.send(OperationType.ServerEndGame.value, False)
+            return self.send(OperationType.ServerEndGame.value, "Red")
 
     def JudgeEndRound(self):
         my = []
@@ -433,8 +436,8 @@ class Game:
 if __name__ == '__main__':
     g = Game()
     g.restart("default.txt")
-    g.handle_move("C1", 2, 2)
-    g.handle_interact("C1", "C2")
-    g.handle_move("C2", 7, 7)
+    g.AI_Operation()
+    g.AI_Operation()
+    g.AI_Operation()
 
 
