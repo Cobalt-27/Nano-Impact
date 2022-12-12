@@ -2,35 +2,27 @@ import json
 import websockets
 import asyncio
 import random
-# from game import Game
+from game import Game
 
-to_send = []
+game=Game()
 
-
-def send(type: str, data: str):
-    print('>', type, data)
-    for ws in to_send:
-        try:
-            asyncio.new_event_loop().run_until_complete(ws.send(f'{type}@{data}'))
-        except Exception:
-            to_send.remove(ws)
-
-
-async def async_send(ws, type: str, data: str):
+async def send(ws, type: str, data: str):
     print('>', type, data)
     await ws.send(f'{type}@{data}')
 
 
 async def nethandle(websocket, path):
-    print('echo')
-    to_send.append(websocket)
+    # try:
     async for message in websocket:
         idx = message.find('@')
         type = message[0:idx]
         data = message[idx + 1:]
         print('@', type)
         print('<', data)
-        asyncio.get_event_loop().run_in_executor(None, handle, websocket, type, data)
+        await handle(websocket, type, data)
+    # except Exception as e:
+    #     print(repr(e))
+        # print('connection closed')
 
 
 def genmap(row, col) -> dict:
@@ -49,32 +41,35 @@ def genmap(row, col) -> dict:
     return m
 
 
-def handle(ws, type, data):
-    pass
+async def handle(ws, type, data):
+    global game
+    game.clearbuf()
+    d=json.loads(data)
     if type == 'NetStartGame':
-        # game.restart(20, 20, None, False, None)
-        return
+        game=Game()
+        game.restart(d['SaveName'])
+        # await send(ws, 'ServerSetMap', json.dumps(genmap(20, 10)))
     if type == 'NetUpgrade':
-        data_json = json.loads(data)
-        game.handle_upgrade(data_json['ID'])
-
-
-async def wait_input():
-    while True:
-        read = await loop.run_in_executor(executor=None, func=input)
-        print(read)
-        await loop.run_in_executor(None, send, 'ClientPrint', 'TestMessage')
+        pass
+        # data_json = json.loads(data)
+        # unit = game.handle_upgrade(data_json['ID'])
+        # await send(ws, 'ServerSetUnits', json.dumps([unit]))
+    if type == 'NetEndRound':
+        game.handle_endRound()
+    if type =='NetInteract':
+        game.handle_interact(d['From'],d['To'])
+    if type== 'NetMove':
+        game.handle_move(d['ID'],d['Row'],d['Col'])
+    for type,content in game.getbuf():
+        await send(ws,type,content)
 
 
 if __name__ == '__main__':
     ip = 'localhost'
     port = 7777
-    game = Game(send)
     loop = asyncio.new_event_loop()
-    loop2 = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     print(f'start server at {ip} {port}')
     loop.run_until_complete(
         websockets.serve(nethandle, ip, port))
-    loop.run_until_complete(wait_input())
     loop.run_forever()
