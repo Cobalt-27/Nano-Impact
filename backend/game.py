@@ -246,7 +246,11 @@ class Game:
 
     def handle_move(self, ID: str, Row: int, Col: int, AI=False):
         if (self.units[ID].Row - Row) ** 2 + (self.units[ID].Col - Col) ** 2 <= self.units[ID].Speed ** 2 \
-                and self.units[ID].CanMove and self.checkFaction(self.units[ID]):
+                and self.units[ID].CanMove and self.checkFaction(self.units[ID]) and self.map.blocks[Row][Col].Type != 4:
+            for i in self.units:
+                if i != ID and self.units[i].Row == Row and self.units[i].Col == Col:
+                    return
+
             self.units[ID].Row = Row
             self.units[ID].Col = Col
             self.units[ID].CanMove = False
@@ -431,3 +435,6 @@ if __name__ == '__main__':
     g.restart("default.txt")
     g.handle_move("C1", 2, 2)
     g.handle_interact("C1", "C2")
+    g.handle_move("C2", 7, 7)
+
+
