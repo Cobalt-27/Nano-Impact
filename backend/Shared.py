@@ -9,6 +9,8 @@ class OperationType(Enum):
     ServerSetBuildings = 'ServerSetBuildings'
     ServerSetFaction = 'ServerSetFaction'
     ClientPrint = 'ClientPrint'
+    NetPlayAttack = "NetPlayAttack"
+    NetPlaySound = "NetPlaySound"
 
 
 class BuildingType(Enum):
