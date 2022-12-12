@@ -201,6 +201,7 @@ class Game:
             if not AI:
                 print("player", "attack")
                 self.send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"))
+                self.JudgeEndRound()
             else:
                 print("AI", "attack")
                 self.send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"), -1, 1)
@@ -226,6 +227,23 @@ class Game:
         if b is True:
             return self.send(OperationType.ServerEndGame.value, False)
 
+    def JudgeEndRound(self):
+        my = []
+        op = []
+        for ID in self.units:
+            if self.checkFaction(self.units[ID]):
+                my.append(self.units[ID])
+            else:
+                op.append(self.units[ID])
+        for unit in my:
+            if unit.CanMove:
+                return
+            else:
+                if unit.CanAttack and self.attack_valid(unit, op):
+                    return
+
+        self.handle_endRound()
+
     def handle_move(self, ID: str, Row: int, Col: int, AI=False):
         if (self.units[ID].Row - Row) ** 2 + (self.units[ID].Col - Col) ** 2 <= self.units[ID].Speed ** 2 \
                 and self.units[ID].CanMove and self.checkFaction(self.units[ID]):
@@ -237,6 +255,7 @@ class Game:
             if not AI:
                 print("player", "move")
                 self.send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"))
+                self.JudgeEndRound()
             else:
                 print("AI", "move")
                 self.send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"), -1, 1)
@@ -410,11 +429,5 @@ class Game:
 if __name__ == '__main__':
     g = Game()
     g.restart("default.txt")
-    g.AI_Operation()
-    g.AI_Operation()
-    g.AI_Operation()
-
-
-
-
-
+    g.handle_move("C1", 2, 2)
+    g.handle_interact("C1", "C2")
