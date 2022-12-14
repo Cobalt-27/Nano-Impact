@@ -200,12 +200,12 @@ class Game:
 
             if not AI:
                 print("player", "attack")
-                self.send(OperationType.NetPlayAttack.value, json.dumps(From), -1, 0)
+                self.send(OperationType.NetPlayAttack.value, json.dumps({"ID":From}), -1, 0)
                 self.send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"))
                 self.JudgeEndRound()
             else:
                 print("AI", "attack")
-                self.send(OperationType.NetPlayAttack.value, json.dumps(From), -1, 1)
+                self.send(OperationType.NetPlayAttack.value, json.dumps({"ID":From}), -1, 1)
                 self.send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"), -1, 1)
 
             self.JudegeEnd()
@@ -225,9 +225,9 @@ class Game:
                 b = False
 
         if a is True:
-            return self.send(OperationType.ServerEndGame.value, "Blue")
+            return self.send(OperationType.ServerEndGame.value, json.dumps({"content":"Blue"}))
         if b is True:
-            return self.send(OperationType.ServerEndGame.value, "Red")
+            return self.send(OperationType.ServerEndGame.value, json.dumps({"content":"Red"}))
 
     def JudgeEndRound(self):
         my = []
@@ -361,9 +361,9 @@ class Game:
 
     def handle_show(self):
         if self.player:
-            self.send(OperationType.ClientShow.value, json.dumps("Blue"))
+            self.send(OperationType.ClientShow.value, json.dumps({"content": "Blue"}))
         else:
-            self.send(OperationType.ClientShow.value, json.dumps("Red"))
+            self.send(OperationType.ClientShow.value, json.dumps({"content": "Red"}))
 
     def handle_quit(self):
 
