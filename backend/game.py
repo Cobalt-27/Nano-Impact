@@ -361,9 +361,9 @@ class Game:
 
     def handle_show(self):
         if self.player:
-            self.send(OperationType.ClientShow, "Blue")
+            self.send(OperationType.ClientShow.value, "Blue")
         else:
-            self.send(OperationType.ClientShow, "Red")
+            self.send(OperationType.ClientShow.value, "Red")
 
     def handle_quit(self):
 
@@ -441,9 +441,9 @@ class Game:
 if __name__ == '__main__':
     g = Game()
     g.restart("default.txt")
-    g.handle_endRound()
-    g.handle_endRound()
-    g.handle_endRound()
+    g.AI_Operation()
+    g.AI_Operation()
+    g.AI_Operation()
 
     for i in g.toSend:
         print(i[0], ">", i[1], i[2], i[3])
