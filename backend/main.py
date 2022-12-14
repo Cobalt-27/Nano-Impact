@@ -68,9 +68,9 @@ async def handle(ws: WebSocketServerProtocol, type, data):
         game.handle_rollBack()
 
     for type, content, target, delay in game.getbuf():
+        await asyncio.sleep(delay)
         for ws in clients:
             await send(clients[ws], type, content)
-            await asyncio.sleep(delay)
 
 
 def get_save():
