@@ -36,7 +36,7 @@ namespace Nano
         void Update()
         {
             UpdateBar();
-            
+            UpdateNetBar();
         }
 
         private void UpdateBar(){
