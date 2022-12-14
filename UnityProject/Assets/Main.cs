@@ -21,6 +21,7 @@ namespace Nano
         private NetHandler handler;
         public readonly string IP = "localhost";
         public readonly int port = 7777;
+        public string ClientName{get;private set;}
         #region Tags
         public static readonly string MapTag="Map";
         public static readonly string UnitTag="Unit";
@@ -31,12 +32,16 @@ namespace Nano
         // Start is called before the first frame update
         void Start()
         {
+            ClientName=DateTime.UtcNow.ToString();
             Instance = this;
             InitGame();
         }
 
         void InitGame(){
             Connect(IP, port);
+            NetSend(new NetGreet(){
+                ClientName=ClientName,
+            });
             NetSend(new NetStartGame(){
                 SaveName="default.txt",
             });

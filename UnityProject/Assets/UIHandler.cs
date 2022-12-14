@@ -76,9 +76,8 @@ namespace Nano
                     break;
             }
         }
-        public void HandleUnit()
-        {
-            throw new NotImplementedException();
+        public static int Distance(int row0,int col0,int row1,int col1){
+            return Math.Abs(row0-row1)+Math.Abs(col0-col1);
         }
         // Start is called before the first frame update
         void Start()
@@ -99,14 +98,14 @@ namespace Nano
                 {
                     UIController.Instance.SetBarTemperary("Valid Target(s)");
                     Unit.All
-                        .Where(u => u != unit && Main.Distance(u.Row, u.Col, unit.Row, unit.Col) <= unit.Range)
+                        .Where(u => u != unit && Distance(u.Row, u.Col, unit.Row, unit.Col) <= unit.Range)
                         .ToList().ForEach(u => u.Block.EnableOverlay = true);
                 }
                 else if (Input.GetKey(KeyCode.S))
                 {
                     UIController.Instance.SetBarTemperary("Reachable");
                     Block.All
-                        .Where(b => b.Unit == null && Main.Distance(b.Row, b.Col, unit.Row, unit.Col) <= unit.Speed)
+                        .Where(b => b.Unit == null && Distance(b.Row, b.Col, unit.Row, unit.Col) <= unit.Speed)
                         .ToList().ForEach(b => b.EnableOverlay = true);
                 }
                 else if (Input.GetKey(KeyCode.D))

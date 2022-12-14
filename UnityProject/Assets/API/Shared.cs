@@ -10,7 +10,7 @@ namespace Nano
     }
     public enum Character
     {
-        Angelina,Eyjafjalla
+        Angelina,Eyjafjalla,Amiya,Skadi
     }
     public enum UnitType
     {
