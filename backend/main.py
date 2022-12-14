@@ -80,8 +80,8 @@ def get_save():
 
 
 if __name__ == '__main__':
-    if not os.path.exists('./Rollback'):
-        os.makedirs('./Rollback')
+    if not os.path.exists('./RollBack'):
+        os.makedirs('./RollBack')
     get_save()
     ip = '0.0.0.0'
     port = 7777
