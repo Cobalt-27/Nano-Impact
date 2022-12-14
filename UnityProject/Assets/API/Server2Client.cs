@@ -76,7 +76,7 @@ namespace Nano
     }
     public class NetPlayAttack : INetMessage
     {
-        string ID;
+        public string ID;
     }
     public class NetPlaySound : INetMessage{
         string Name;

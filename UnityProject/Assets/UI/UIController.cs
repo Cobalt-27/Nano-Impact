@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -17,6 +18,10 @@ namespace Nano
         private GameObject title;
         [SerializeField]
         private GameObject barTextInstance;
+        [SerializeField]
+        private GameObject netBarInstance;
+
+        private string netContent;
         private string barContent;
         private string barContentTemp;
         private int clearBarCounter;
@@ -30,19 +35,28 @@ namespace Nano
         // Update is called once per frame
         void Update()
         {
-            var com = barTextInstance.GetComponent<TextMeshProUGUI>();
+            UpdateBar();
+            
+        }
+
+        private void UpdateBar(){
+            var textComponent = barTextInstance.GetComponent<TextMeshProUGUI>();
             if (barContentTemp != null)
             {
-                com.text = barContentTemp;
+                textComponent.text = barContentTemp;
                 clearBarCounter++;
                 if (clearBarCounter % 5 == 0)
                     barContentTemp = null;
             }
             else
             {
-                com.text = barContent;
+                textComponent.text = barContent;
             }
-            
+        }
+
+        private void UpdateNetBar(){
+            var textComponent = netBarInstance.GetComponent<TextMeshProUGUI>();
+            textComponent.text = netContent;
         }
         public void SetLowerBar(string content)
         {
@@ -74,6 +88,7 @@ namespace Nano
                 instance.transform.SetParent(list.transform);
             }
         }
+        
         public void SetTitle(string s)
         {
             title.GetComponent<TextMeshProUGUI>().text = s;
@@ -86,5 +101,9 @@ namespace Nano
         {
             barContentTemp = s;
         }
+        public void setNetBar(string s){
+            netContent=s;
+        }
+        
     }
 }

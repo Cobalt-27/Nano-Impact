@@ -56,15 +56,25 @@ namespace Nano
                     OnSetBuildings(To<ServerSetBuildings>(json));
                     break;
                 case "ClientPrint":
-                    var content = To<ClientPrint>(json);
-                    print(content.content);
+                    print(To<ClientPrint>(json).content);
                     break;
                 case "ServerEndGame":
+                
+                    break;
+                case "ClientShow":
+                    UIController.Instance.setNetBar(To<ClientShow>(json).content);
+                    break;
+                case "NetPlayAttack":
+                    OnAttack(To<NetPlayAttack>(json).ID);
                     break;
                 default:
                     return;
                     throw new NotImplementedException();
             }
+        }
+
+        private void OnAttack(string id){
+            Unit.All.First(u=>u.name==id).PlayAttackAnim();
         }
 
         private void Remove(string tag, IEnumerable<string> exclude)
