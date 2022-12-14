@@ -66,6 +66,10 @@ namespace Nano
         public string content;
     }
 
+    public class ClientShow : INetMessage{
+        public string content;
+    }
+
     public class NetSetSaveInfo : INetMessage
     {
         public NetSaveInfo[] SaveInfoList;
