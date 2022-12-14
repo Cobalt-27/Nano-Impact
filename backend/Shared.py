@@ -11,6 +11,7 @@ class OperationType(Enum):
     ClientPrint = 'ClientPrint'
     NetPlayAttack = "NetPlayAttack"
     NetPlaySound = "NetPlaySound"
+    ClientShow = "ClientShow"
 
 
 class BuildingType(Enum):

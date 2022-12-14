@@ -210,7 +210,6 @@ class Game:
 
             self.JudegeEnd()
 
-
     def LevelUp(self, unit, value):
         unit.Strength += value
         unit.Defence += value
@@ -249,7 +248,8 @@ class Game:
 
     def handle_move(self, ID: str, Row: int, Col: int, AI=False):
         if (self.units[ID].Row - Row) ** 2 + (self.units[ID].Col - Col) ** 2 <= self.units[ID].Speed ** 2 \
-                and self.units[ID].CanMove and self.checkFaction(self.units[ID]) and self.map.blocks[Row][Col].Type != 4:
+                and self.units[ID].CanMove and self.checkFaction(self.units[ID]) and self.map.blocks[Row][
+            Col].Type != 4:
             for i in self.units:
                 if i != ID and self.units[i].Row == Row and self.units[i].Col == Col:
                     return
@@ -318,11 +318,10 @@ class Game:
                 self.units[i].CanAttack = False
 
         self.record_for_rollback()
+        self.handle_show()
         if not AI:
-            print("player", "end round")
             self.send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"))
         else:
-            print("AI", "end round")
             self.send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"), -1, 1)
 
     def record_for_rollback(self):
@@ -358,6 +357,13 @@ class Game:
         self.set_unit(character)
         self.set_building(building)
         self.set_relic(relic)
+        self.handle_show()
+
+    def handle_show(self):
+        if self.player:
+            self.send(OperationType.ClientShow, "Blue")
+        else:
+            self.send(OperationType.ClientShow, "Red")
 
     def handle_quit(self):
 
@@ -416,7 +422,6 @@ class Game:
     def send(self, type, value, target=-1, delay=0):
         if self.isEnd is not True:
             self.toSend.append((type, value, target, delay))  # -1, 0
-            print(type, ">", value, target, delay)
         if type == OperationType.ServerEndGame.value:
             self.isEnd = True
 
@@ -436,8 +441,9 @@ class Game:
 if __name__ == '__main__':
     g = Game()
     g.restart("default.txt")
-    g.AI_Operation()
-    g.AI_Operation()
-    g.AI_Operation()
+    g.handle_endRound()
+    g.handle_endRound()
+    g.handle_endRound()
 
-
+    for i in g.toSend:
+        print(i[0], ">", i[1], i[2], i[3])
