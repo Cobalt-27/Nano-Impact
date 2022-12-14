@@ -34,7 +34,7 @@ namespace Nano
     }
     public enum RelicType
     {
-        Flower, Plume, Sands, Goblet, Circlet
+        R0,R1,R2
     }
 
 }
