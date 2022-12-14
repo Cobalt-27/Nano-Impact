@@ -141,6 +141,7 @@ class Game:
         self.toSend = []
         self.step = 0
         self.isEnd = False
+        self.enable_ai=True
 
     def restart(self, SaveName):  # 初始化 default
         self.map = None
@@ -243,7 +244,6 @@ class Game:
             else:
                 if unit.CanAttack and self.attack_valid(unit, op):
                     return
-
         self.handle_endRound()
 
     def handle_move(self, ID: str, Row: int, Col: int, AI=False):
@@ -323,6 +323,8 @@ class Game:
             self.send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"))
         else:
             self.send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"), -1, 1)
+        if self.player and self.enable_ai:# is blue
+            self.AI_Operation()
 
     def record_for_rollback(self):
         with open("RollBack/" + str(self.step), 'w') as f:
