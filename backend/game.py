@@ -193,8 +193,12 @@ class Game:
             type = 0
             if self.map.blocks[attacker.Row][attacker.Col].Type < 3:
                 type += self.map.blocks[attacker.Row][attacker.Col].Type
+            if self.map.blocks[attacker.Row][attacker.Col].Type == 3:
+                type -= 1
             if self.map.blocks[defender.Row][defender.Col].Type < 3:
                 type -= self.map.blocks[defender.Row][defender.Col].Type
+            if self.map.blocks[defender.Row][defender.Col].Type == 3:
+                type += 1
             if attacker.Strength - defender.Defence + type > 0:
                 defender.Life -= (attacker.Strength - defender.Defence + type)
             if defender.Life <= 0:
@@ -329,14 +333,14 @@ class Game:
             self.send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"))
         else:
             self.send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"), -1, 1)
-        if self.player and self.enable_ai:  # is blue
+        if not self.player and self.enable_ai:  # is blue
             self.AI_Operation()
 
     def building_update_state(self):
         for i in self.units:
             if (self.units[i].Row - self.buildings["B1"].Row) ** 2 + \
                     (self.units[i].Col - self.buildings["B1"].Col) ** 2 <= 5:
-                self.units[i].Level += 1
+                self.LevelUp(unit=self.units[i], value=1)
             if (self.units[i].Row - self.buildings["B2"].Row) ** 2 + \
                     (self.units[i].Col - self.buildings["B2"].Col) ** 2 <= 5:
                 self.units[i].Life += 1
@@ -383,8 +387,10 @@ class Game:
             self.send(OperationType.ClientShow.value, json.dumps({"content": "Red"}))
 
     def handle_quit(self):
-
-        self.send(OperationType.ServerEndGame.value, False)
+        if self.player:
+            self.send(OperationType.ServerEndGame.value, json.dumps({"content": "Red"}))
+        else:
+            self.send(OperationType.ServerEndGame.value, json.dumps({"content": "Blue"}))
 
     def package_list(self, data, type=None):
         d = []
@@ -458,7 +464,7 @@ class Game:
 if __name__ == '__main__':
     g = Game()
     g.restart("default.txt")
-    g.handle_move("C1", 2, 2)
+    g.handle_move("C1", 1, 1)
     g.handle_interact("C1", "C2")
 
     for i in g.toSend:
