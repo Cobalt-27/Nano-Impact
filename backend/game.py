@@ -465,6 +465,7 @@ if __name__ == '__main__':
     g = Game()
     g.restart("default.txt")
     g.handle_endRound()
+    g.handle_endRound()
 
     for i in g.toSend:
         print(i[0], ">", i[1], i[2], i[3])
