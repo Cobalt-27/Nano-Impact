@@ -141,7 +141,7 @@ class Game:
         self.toSend = []
         self.step = 0
         self.isEnd = False
-        self.enable_ai=True
+        self.enable_ai = True
 
     def restart(self, SaveName):  # 初始化 default
         self.map = None
@@ -190,8 +190,13 @@ class Game:
         if (attacker.Row - defender.Row) ** 2 + (attacker.Col - defender.Col) ** 2 <= attacker.Range ** 2 \
                 and attacker.CanAttack and self.checkFaction(attacker) and not self.checkFaction(defender):
             attacker.CanAttack = False
-            if attacker.Strength - defender.Defence > 0:
-                defender.Life -= (attacker.Strength - defender.Defence)
+            type = 0
+            if self.map.blocks[attacker.Row][attacker.Col].Type < 3:
+                type += self.map.blocks[attacker.Row][attacker.Col].Type
+            if self.map.blocks[defender.Row][defender.Col].Type < 3:
+                type -= self.map.blocks[defender.Row][defender.Col].Type
+            if attacker.Strength - defender.Defence + type > 0:
+                defender.Life -= (attacker.Strength - defender.Defence + type)
             if defender.Life <= 0:
                 self.units.pop(defender.ID)
                 attacker.Level += defender.Level
@@ -201,12 +206,12 @@ class Game:
 
             if not AI:
                 print("player", "attack")
-                self.send(OperationType.NetPlayAttack.value, json.dumps({"ID":From}), -1, 0)
+                self.send(OperationType.NetPlayAttack.value, json.dumps({"ID": From}), -1, 0)
                 self.send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"))
                 self.JudgeEndRound()
             else:
                 print("AI", "attack")
-                self.send(OperationType.NetPlayAttack.value, json.dumps({"ID":From}), -1, 1)
+                self.send(OperationType.NetPlayAttack.value, json.dumps({"ID": From}), -1, 1)
                 self.send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"), -1, 1)
 
             self.JudegeEnd()
@@ -226,9 +231,9 @@ class Game:
                 b = False
 
         if a is True:
-            return self.send(OperationType.ServerEndGame.value, json.dumps({"content":"Blue"}))
+            return self.send(OperationType.ServerEndGame.value, json.dumps({"content": "Blue"}))
         if b is True:
-            return self.send(OperationType.ServerEndGame.value, json.dumps({"content":"Red"}))
+            return self.send(OperationType.ServerEndGame.value, json.dumps({"content": "Red"}))
 
     def JudgeEndRound(self):
         my = []
@@ -319,12 +324,22 @@ class Game:
 
         self.record_for_rollback()
         self.handle_show()
+        self.building_update_state()
         if not AI:
             self.send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"))
         else:
             self.send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"), -1, 1)
-        if self.player and self.enable_ai:# is blue
+        if self.player and self.enable_ai:  # is blue
             self.AI_Operation()
+
+    def building_update_state(self):
+        for i in self.units:
+            if (self.units[i].Row - self.buildings["B1"].Row) ** 2 + \
+                    (self.units[i].Col - self.buildings["B1"].Col) ** 2 <= 5:
+                self.units[i].Level += 1
+            if (self.units[i].Row - self.buildings["B2"].Row) ** 2 + \
+                    (self.units[i].Col - self.buildings["B2"].Col) ** 2 <= 5:
+                self.units[i].Life += 1
 
     def record_for_rollback(self):
         with open("RollBack/" + str(self.step), 'w') as f:
@@ -443,9 +458,7 @@ class Game:
 if __name__ == '__main__':
     g = Game()
     g.restart("default.txt")
-    g.AI_Operation()
-    g.AI_Operation()
-    g.AI_Operation()
+    g.handle_endRound()
 
     for i in g.toSend:
         print(i[0], ">", i[1], i[2], i[3])
