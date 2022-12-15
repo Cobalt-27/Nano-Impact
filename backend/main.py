@@ -68,9 +68,9 @@ async def handle(ws: WebSocketServerProtocol, type, data):
         game.handle_rollBack()
 
     for type, content, target, delay in game.getbuf():
+        await asyncio.sleep(delay)
         for ws in clients:
             await send(clients[ws], type, content)
-            await asyncio.sleep(delay)
 
 
 def get_save():
@@ -80,8 +80,8 @@ def get_save():
 
 
 if __name__ == '__main__':
-    if not os.path.exists('./Rollback'):
-        os.makedirs('./Rollback')
+    if not os.path.exists('./RollBack'):
+        os.makedirs('./RollBack')
     get_save()
     ip = '0.0.0.0'
     port = 7777
