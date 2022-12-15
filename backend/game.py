@@ -458,7 +458,8 @@ class Game:
 if __name__ == '__main__':
     g = Game()
     g.restart("default.txt")
-    g.handle_endRound()
+    g.handle_move("C1", 2, 2)
+    g.handle_interact("C1", "C2")
 
     for i in g.toSend:
         print(i[0], ">", i[1], i[2], i[3])
