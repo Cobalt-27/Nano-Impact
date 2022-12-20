@@ -10,6 +10,7 @@ from websockets.server import WebSocketServerProtocol
 
 game = Game()
 clients = {}
+client_id = []
 
 
 async def send(ws, type: str, data: str):
@@ -21,8 +22,10 @@ async def send(ws, type: str, data: str):
 async def nethandle(websocket: WebSocketServerProtocol, path):
     # try:
     global clients
+    global game
     addr = websocket.remote_address
     clients[addr[0]] = websocket
+    client_id.append(addr[0])
     async for message in websocket:
         idx = message.find('@')
         type = message[0:idx]
@@ -69,6 +72,13 @@ async def handle(ws: WebSocketServerProtocol, type, data):
 
     for type, content, target, delay in game.getbuf():
         await asyncio.sleep(delay)
+        print(target)
+        if target == -1:
+            await send(clients[client_id[0]], type, content)
+            await send(clients[client_id[1]], type, content)
+        else:
+            await send(clients[client_id[target]], type, content)
+
         for ws in clients:
             await send(clients[ws], type, content)
 
