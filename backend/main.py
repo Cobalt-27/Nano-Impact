@@ -9,8 +9,23 @@ from game import Game
 from websockets.server import WebSocketServerProtocol
 
 game = Game()
-clients = {}
-client_id = []
+clients = []
+multiplayer = True
+
+
+class ClientInfo:
+    def __init__(self, addr, name, index, ws):
+        self.addr = addr
+        self.name = name
+        self.index = index
+        self.ws = ws
+
+
+def search_client(x):
+    for client in clients:
+        if client.addr == x or client.name == x or client.index == x:
+            return client
+    return None
 
 
 async def send(ws, type: str, data: str):
@@ -20,12 +35,6 @@ async def send(ws, type: str, data: str):
 
 
 async def nethandle(websocket: WebSocketServerProtocol, path):
-    # try:
-    global clients
-    global game
-    addr = websocket.remote_address
-    clients[addr[0]] = websocket
-    client_id.append(addr[0])
     async for message in websocket:
         idx = message.find('@')
         type = message[0:idx]
@@ -40,13 +49,48 @@ async def nethandle(websocket: WebSocketServerProtocol, path):
 
 async def handle(ws: WebSocketServerProtocol, type, data):
     global game
+    global multiplayer
+    global clients
     game.clearbuf()
     d = json.loads(data)
-    if type == 'NetGreet':
-        game.getbuf().append(('NetSetSaveInfo', get_save(), -1, 0))
-    elif type == 'NetStartGame':
+    # handle greet
+    if multiplayer:
+        addr = ws.remote_address
+        if type != 'NetGreet' and len(clients) < 2:
+            # await ws.close()
+            return
+        if type == 'NetGreet' and len(clients) >= 2:
+            print(f'close socket with {addr} because full client')
+            await ws.close()
+            return
+        if type == 'NetGreet':
+            clients.append(ClientInfo(addr, d['ClientName'], len(clients), ws))
+            game.getbuf().append(('NetSaveInfo', get_save(), -1, 0))
+            if len(clients) == 1:
+                game.getbuf().append(('ClientShow', generate_message('Waiting'), 0, 0))
+        # Throw wrong packets
+        c = search_client(addr)
+        cur_index = 1
+        if game.player:
+            cur_index = 0
+        print(cur_index)
+        print(c.index)
+        if c is None or (type not in ['NetGreet', 'NetStartGame'] and c.index != cur_index):
+            print(f'Unsupported {type} command from opposite')
+            return
+    else:
+        if type == 'NetGreet':
+            if len(clients) == 0:
+                addr = ws.remote_address
+                clients.append(ClientInfo(addr, d['ClientName'], len(clients), ws))
+                game.getbuf().append(('NetSaveInfo', get_save(), -1, 0))
+            else:
+                await ws.close()
+                return
+    if type == 'NetStartGame':
         game = Game()
         game.restart(d['SaveName'])
+        game.enable_ai = False
         # await send(ws, 'ServerSetMap', json.dumps(genmap(20, 10)))
     elif type == 'NetUpgrade':
         pass
@@ -69,30 +113,41 @@ async def handle(ws: WebSocketServerProtocol, type, data):
         game.handle_quit()
     elif type == 'NetRollback':
         game.handle_rollBack()
-
+    print('prepare to send')
     for type, content, target, delay in game.getbuf():
         await asyncio.sleep(delay)
-        print(target)
         if target == -1:
-            await send(clients[client_id[0]], type, content)
-            await send(clients[client_id[1]], type, content)
+            for c in clients:
+                await send(c.ws, type, content)
         else:
-            await send(clients[client_id[target]], type, content)
+            await send(search_client(target).ws, type, content)
 
-        for ws in clients:
-            await send(clients[ws], type, content)
+        # for ws in clients:
+        #     await send(clients[ws], type, content)
 
 
 def get_save():
     if not os.path.exists('./Saving'):
         os.makedirs('./Saving')
-    return json.dumps(os.listdir('./Saving'))
+    saves = []
+    for file in os.listdir('./Saving'):
+        save = dict()
+        save['Name'] = file.split('.')[0]
+        save['Description'] = 'No Description'
+        saves.append(save)
+    return json.dumps(saves)
+
+
+def generate_message(str):
+    message = dict()
+    message['content'] = str
+    return json.dumps(message)
 
 
 if __name__ == '__main__':
     if not os.path.exists('./RollBack'):
         os.makedirs('./RollBack')
-    get_save()
+    # print(get_save())
     ip = '0.0.0.0'
     port = 7777
     loop = asyncio.new_event_loop()
