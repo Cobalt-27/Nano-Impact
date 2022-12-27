@@ -22,7 +22,7 @@ namespace Nano
         {
             if (Enabled)
             {
-                gameObject.transform.Translate(new Vector3(0, 0, speed));
+                gameObject.transform.Translate(new Vector3(0, -speed, 0));
                 lifeSpan--;
                 if (lifeSpan <= 0)
                 {

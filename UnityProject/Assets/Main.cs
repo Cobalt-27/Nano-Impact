@@ -34,7 +34,6 @@ namespace Nano
         {
             ClientName=DateTime.UtcNow.ToString();
             Instance = this;
-            InitGame();
         }
 
         void InitGame(){
@@ -64,6 +63,7 @@ namespace Nano
             }
         }
 
+        public void SetWebSocket(WebSocket ws)=>this.ws=ws;
         public void NetSend<T>(T data)
         {
             if (Connected)

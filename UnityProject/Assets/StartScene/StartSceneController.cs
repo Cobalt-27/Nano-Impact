@@ -21,7 +21,7 @@ namespace Nano
         {
             counter++;
             if(counter%interval==0){
-                Instantiate(block,Vector3.zero,Quaternion.identity);
+                Instantiate(block,gameObject.transform.position,Quaternion.identity);
             }
         }
     }
