@@ -24,9 +24,10 @@ namespace Nano
         {
             get
             {
+                int n=infoList.Count;
                 if (infoList.Count == 0)
                     return null;
-                return infoList[pointer % infoList.Count];
+                return infoList[((pointer % n)+n)%n];
             }
         }
         private int pointer;
@@ -42,7 +43,7 @@ namespace Nano
             if (Input.GetKeyDown(KeyCode.Return))
             {
                 string ip = input.GetComponent<TextMeshProUGUI>().text;
-                ip = ip.Substring(0,ip.Length-1);
+                ip = ip.Substring(0, ip.Length - 1);
                 Main.Instance.Connect(ip, port);
             }
             if (Input.GetKeyDown(KeyCode.LeftArrow))
@@ -52,6 +53,14 @@ namespace Nano
             if (Input.GetKeyDown(KeyCode.RightArrow))
             {
                 pointer++;
+            }
+            if (Input.GetKeyDown(KeyCode.P) && selected != null)
+            {
+                Main.Instance.NetSend<NetStartGame>(new NetStartGame
+                {
+                    SaveName = selected.Name,
+                    Load = true,
+                });
             }
             var name = selected == null ? "..." : selected.Name;
             infoName.GetComponent<TextMeshProUGUI>().text = name;

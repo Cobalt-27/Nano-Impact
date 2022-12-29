@@ -59,15 +59,7 @@ namespace Nano
         }
 
 
-        void InitGame(){
-            // Connect(IP, port);
-            NetSend(new NetStartGame(){
-                SaveName="default.txt",
-            });
-        }
-
-
-        private void GameSceneSetActive(bool active){
+        public void GameSceneSetActive(bool active){
             gameStart=active;
             gameCamera.SetActive(active);
             menuCamera.SetActive(!active);
@@ -135,13 +127,6 @@ namespace Nano
                 }
                 if(Input.GetKeyDown(KeyCode.Backspace)){
                     NetSend(new NetRollback());
-                }
-            }
-            else
-            {
-                if (Input.GetKeyDown(KeyCode.P))
-                {
-                    InitGame();
                 }
             }
         }

@@ -153,7 +153,7 @@ class Game:
         self.toSend = []
         self.step = 0
 
-        self.handle_read("Saving/" + SaveName)
+        self.handle_read("Saving/" + SaveName+'.txt')
         self.record_for_rollback()
 
     def set_map(self, Row, Col, Blocks):

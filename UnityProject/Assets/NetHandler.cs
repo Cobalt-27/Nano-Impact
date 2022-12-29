@@ -47,6 +47,7 @@ namespace Nano
             switch (name)
             {
                 case "ServerSetMap":
+                    Main.Instance.GameSceneSetActive(true);
                     mapInstance.GetComponent<Map>().NetUpdate(To<ServerSetMap>(json));
                     break;
                 case "ServerSetUnits":
@@ -59,7 +60,7 @@ namespace Nano
                     print(To<ClientPrint>(json).content);
                     break;
                 case "ServerEndGame":
-                
+                    Main.Instance.GameSceneSetActive(false);
                     break;
                 case "ClientShow":
                     UIController.Instance.setNetBar(To<ClientShow>(json).content);
