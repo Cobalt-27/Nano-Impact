@@ -135,7 +135,9 @@ def get_save():
         save['Name'] = file.split('.')[0]
         save['Description'] = 'No Description'
         saves.append(save)
-    return json.dumps(saves)
+    to_dump = dict()
+    to_dump['SaveInfoList'] = saves
+    return json.dumps(to_dump)
 
 
 def generate_message(str):
