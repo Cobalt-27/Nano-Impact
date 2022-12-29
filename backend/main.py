@@ -10,7 +10,7 @@ from websockets.server import WebSocketServerProtocol
 
 game = Game()
 clients = []
-multiplayer = True
+multiplayer = False
 
 
 class ClientInfo:
@@ -65,7 +65,7 @@ async def handle(ws: WebSocketServerProtocol, type, data):
             return
         if type == 'NetGreet':
             clients.append(ClientInfo(addr, d['ClientName'], len(clients), ws))
-            game.getbuf().append(('NetSaveInfo', get_save(), -1, 0))
+            game.getbuf().append(('NetSetSaveInfo', get_save(), -1, 0))
             if len(clients) == 1:
                 game.getbuf().append(('ClientShow', generate_message('Waiting'), 0, 0))
         # Throw wrong packets
@@ -83,7 +83,7 @@ async def handle(ws: WebSocketServerProtocol, type, data):
             if len(clients) == 0:
                 addr = ws.remote_address
                 clients.append(ClientInfo(addr, d['ClientName'], len(clients), ws))
-                game.getbuf().append(('NetSaveInfo', get_save(), -1, 0))
+                game.getbuf().append(('NetSetSaveInfo', get_save(), -1, 0))
             else:
                 await ws.close()
                 return

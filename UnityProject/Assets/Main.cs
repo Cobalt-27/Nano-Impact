@@ -19,14 +19,35 @@ namespace Nano
         private WebSocket ws;
         [SerializeField]
         private NetHandler handler;
+        [SerializeField]
+        private GameObject gameLight;
+        [SerializeField]
+        private GameObject menuLight;
+        [SerializeField]
+        private GameObject gameCanvas;
+        [SerializeField]
+        private GameObject gameCamera;
+        [SerializeField]
+        private GameObject menuCamera;
+        [SerializeField]
+        private Material menuSkyBox;
+        [SerializeField]
+        private Material gameSkyBox;
+
+        private bool gameStart=false;
+
+
         public readonly string IP = "localhost";
         public readonly int port = 7777;
         public string ClientName{get;private set;}
+
         #region Tags
         public static readonly string MapTag="Map";
         public static readonly string UnitTag="Unit";
         public static readonly string BuildingTag="Building";
         public static readonly string RelicTag="Relic";
+        public static readonly string Untagged="Untagged";
+        public static readonly string MainCameraTag="MainCamera";
         #endregion
 
         // Start is called before the first frame update
@@ -34,25 +55,39 @@ namespace Nano
         {
             ClientName=DateTime.UtcNow.ToString();
             Instance = this;
+            GameSceneSetActive(false);
         }
 
+
         void InitGame(){
-            Connect(IP, port);
-            NetSend(new NetGreet(){
-                ClientName=ClientName,
-            });
+            // Connect(IP, port);
             NetSend(new NetStartGame(){
                 SaveName="default.txt",
             });
         }
 
 
-        private void Connect(string ip, int port)
+        private void GameSceneSetActive(bool active){
+            gameStart=active;
+            gameCamera.SetActive(active);
+            menuCamera.SetActive(!active);
+            gameLight.SetActive(active);
+            menuLight.SetActive(!active);
+            gameCanvas.SetActive(active);
+            RenderSettings.skybox=active?gameSkyBox:menuSkyBox;
+        }
+
+
+        public void Connect(string ip, int port)
         {
+            print($"connecting to {ip} {port}");
             ws = new WebSocket($"ws://{ip}:{port}");
             ws.Connect();
             ws.OnMessage += (sender, e) => NetReceive(e.Data);
-            print($"connected to {ip} {port}");
+            print($"connected");
+            NetSend(new NetGreet(){
+                ClientName=ClientName,
+            });
         }
 
         void NetReceive(string raw)
@@ -63,6 +98,7 @@ namespace Nano
             }
         }
 
+
         public void SetWebSocket(WebSocket ws)=>this.ws=ws;
         public void NetSend<T>(T data)
         {
@@ -71,14 +107,16 @@ namespace Nano
                 string type=data.GetType().Name;
                 string json=JsonConvert.SerializeObject(data);
                 print($"@ {type}");
-                print($"< {json}");
-                ws.Send($"{type}@{JsonConvert.SerializeObject(data)}");
+                print($"> {json}");
+                ws.Send($"{type}@{json}");
             }
             else
             {
                 print("NetSend failed: connection closed");
             }
         }
+
+
         // Update is called once per frame
         void Update()
         {

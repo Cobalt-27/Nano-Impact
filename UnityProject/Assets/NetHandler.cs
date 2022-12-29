@@ -35,7 +35,7 @@ namespace Nano
                     string type = raw.Substring(0, idx);
                     string json = raw.Substring(idx + 1);
                     print($"@ {type}");
-                    print($"> {json}");
+                    print($"< {json}");
                     Dispatch(type, json);
                 }
                 MessageList.Clear();
@@ -66,6 +66,9 @@ namespace Nano
                     break;
                 case "NetPlayAttack":
                     OnAttack(To<NetPlayAttack>(json).ID);
+                    break;
+                case "NetSetSaveInfo":
+                    StartSceneController.Instance.SetSaveInfo(To<NetSetSaveInfo>(json));
                     break;
                 default:
                     return;
