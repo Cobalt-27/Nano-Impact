@@ -37,7 +37,7 @@ namespace Nano
         private bool gameStart=false;
 
 
-        public readonly string IP = "127.0.0.1";
+        public readonly string IP = "localhost";
         public readonly int port = 7777;
         public string ClientName{get;private set;}
 
