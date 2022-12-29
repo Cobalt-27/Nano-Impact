@@ -22,7 +22,7 @@ namespace Nano
         [SerializeField]
         private GameObject gameLight;
         [SerializeField]
-        private GameObject menuLight;
+        private GameObject menuRoot;
         [SerializeField]
         private GameObject gameCanvas;
         [SerializeField]
@@ -62,9 +62,9 @@ namespace Nano
         public void GameSceneSetActive(bool active){
             gameStart=active;
             gameCamera.SetActive(active);
-            menuCamera.SetActive(!active);
+            // menuCamera.SetActive(!active);
             gameLight.SetActive(active);
-            menuLight.SetActive(!active);
+            menuRoot.SetActive(!active);
             gameCanvas.SetActive(active);
             RenderSettings.skybox=active?gameSkyBox:menuSkyBox;
         }
