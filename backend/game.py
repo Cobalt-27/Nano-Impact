@@ -463,7 +463,7 @@ class Game:
 
 if __name__ == '__main__':
     g = Game()
-    g.restart("default.txt")
+    g.restart("player-to-player")
     g.handle_endRound()
     g.handle_endRound()
 
