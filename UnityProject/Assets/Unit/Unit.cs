@@ -22,7 +22,7 @@ namespace Nano
         public bool CanMove { get; private set; }
         public bool CanAttack { get; private set; }
         private string RelicID;
-
+        private bool firstUpdate=true;
         public Faction Faction { get; private set; }
         private GameObject unitSprite = null;
         private GameObject healthBar=null;
@@ -80,6 +80,10 @@ namespace Nano
             RelicID = data.RelicID;
             Faction = data.Faction;
             Speed = data.Speed;
+            if(firstUpdate){
+                firstUpdate=false;
+                gameObject.transform.position= Block.Top;
+            }
 
             if (unitSprite == null)
             {

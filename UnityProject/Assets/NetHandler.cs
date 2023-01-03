@@ -60,7 +60,9 @@ namespace Nano
                     print(To<ClientPrint>(json).content);
                     break;
                 case "ServerEndGame":
-                    GameEndPage.Instance.Show(To<ServerEndGame>(json).Winner);
+                    GamePausePage.Instance.ShowGameEnd(To<ServerEndGame>(json).Winner);
+                    Main.Instance.GameSceneSetActive(false);
+                    ClearSupervised();
                     break;
                 case "ClientShow":
                     UIController.Instance.setNetBar(To<ClientShow>(json).content);
@@ -109,7 +111,11 @@ namespace Nano
             }
             return inited;
         }
-
+        private void ClearSupervised(){
+            var empty=new List<string>();
+            Remove(Main.UnitTag,empty);
+            // Remove(Main.bui)
+        }
         private void OnSetUnits(ServerSetUnits args)
         {
             var names = args.Units.Select(u => u.ID);

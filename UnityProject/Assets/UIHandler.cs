@@ -98,7 +98,7 @@ namespace Nano
                 {
                     UIController.Instance.SetBarTemperary("Valid Target(s)");
                     Unit.All
-                        .Where(u => u != unit && Distance(u.Row, u.Col, unit.Row, unit.Col) <= unit.Range)
+                        .Where(u => u.Faction != unit.Faction && Distance(u.Row, u.Col, unit.Row, unit.Col) <= unit.Range)
                         .ToList().ForEach(u => u.Block.EnableOverlay = true);
                 }
                 else if (Input.GetKey(KeyCode.S))
