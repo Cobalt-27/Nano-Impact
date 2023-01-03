@@ -39,9 +39,10 @@ namespace Nano
         public string Name;
         public string Description;
     }
-    public class ServerSetFaction : INetMessage
+    public class ServerStartGame : INetMessage
     {
-        public Faction Faction;
+        public GameMode Mode;
+        public Faction Faction;//invalid if singleplay
     }
     public class ServerEndGame : INetMessage
     {

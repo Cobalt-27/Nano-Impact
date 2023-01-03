@@ -8,7 +8,7 @@ namespace Nano
     public class UnitResources : MonoBehaviour
     {
         public static UnitResources Instance{get;private set;}
-        public GameObject Angelina,Eyjafjalla,Amiya,Skadi,Kaltsit,Surtr;
+        public GameObject Angelina,Eyjafjalla,Amiya,Skadi,Kaltsit,Surtr,BarRed,BarBlue;
         // Start is called before the first frame update
         void Start()
         {
@@ -28,6 +28,11 @@ namespace Nano
             Character.Kaltsit=>Kaltsit,
             Character.Surtr=>Surtr,
             _=> throw new NotImplementedException(),
+        };
+        public GameObject GetHealthBar(Faction f)=>f switch{
+            Faction.Blue=>BarBlue,
+            Faction.Red=>BarRed,
+            _=>throw new NotImplementedException(),
         };
     }
 }

@@ -35,13 +35,17 @@ async def send(ws, type: str, data: str):
 
 
 async def nethandle(websocket: WebSocketServerProtocol, path):
-    async for message in websocket:
-        idx = message.find('@')
-        type = message[0:idx]
-        data = message[idx + 1:]
-        print('@', type)
-        print('<', data)
-        await handle(websocket, type, data)
+    try:
+        async for message in websocket:
+            idx = message.find('@')
+            type = message[0:idx]
+            data = message[idx + 1:]
+            print('@', type)
+            print('<', data)
+            await handle(websocket, type, data)
+    except websockets.ConnectionClosedError:
+        print(f'Connection closed with {websocket.remote_address}')
+        clients.remove(search_client(websocket.remote_address))
     # except Exception as e:
     #     print(repr(e))
     # print('connection closed')
@@ -54,12 +58,12 @@ async def handle(ws: WebSocketServerProtocol, type, data):
     game.clearbuf()
     d = json.loads(data)
     # handle greet
+    addr = ws.remote_address
     if multiplayer:
-        addr = ws.remote_address
         if type != 'NetGreet' and len(clients) < 2:
             # await ws.close()
             return
-        if type == 'NetGreet' and len(clients) >= 2:
+        if type == 'NetGreet' and len(clients) >= 2 and search_client(addr) is None:
             print(f'close socket with {addr} because full client')
             await ws.close()
             return
@@ -80,11 +84,16 @@ async def handle(ws: WebSocketServerProtocol, type, data):
             return
     else:
         if type == 'NetGreet':
-            if len(clients) == 0:
-                addr = ws.remote_address
+            client = search_client(d['ClientName'])
+            if client is not None:
+                await client.ws.close()
+                clients.remove(client)
+                print(f'close socket with {client.addr} because reconnect')
+            if len(clients) == 0 or search_client(addr) is not None:
                 clients.append(ClientInfo(addr, d['ClientName'], len(clients), ws))
                 game.getbuf().append(('NetSetSaveInfo', get_save(), -1, 0))
             else:
+                print(f'close socket with {addr} because full client')
                 await ws.close()
                 return
     if type == 'NetStartGame':

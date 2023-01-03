@@ -34,44 +34,50 @@ namespace Nano
         [SerializeField]
         private Material gameSkyBox;
 
-        private bool gameStart=false;
+        private bool gameStart = false;
 
 
         public readonly string IP = "localhost";
         public readonly int port = 7777;
-        public string ClientName{get;private set;}
+        public string ClientName { get; private set; }
+        public Faction MyFaction { get; set; }
+        public GameMode GameMode { get; set; }
 
-        #region Tags
-        public static readonly string MapTag="Map";
-        public static readonly string UnitTag="Unit";
-        public static readonly string BuildingTag="Building";
-        public static readonly string RelicTag="Relic";
-        public static readonly string Untagged="Untagged";
-        public static readonly string MainCameraTag="MainCamera";
+        #region Consts
+        public static readonly int MaxHealth = 100;
+        public static readonly string MapTag = "Map";
+        public static readonly string UnitTag = "Unit";
+        public static readonly string BuildingTag = "Building";
+        public static readonly string RelicTag = "Relic";
+        public static readonly string Untagged = "Untagged";
+        public static readonly string MainCameraTag = "MainCamera";
         #endregion
 
         // Start is called before the first frame update
         void Start()
         {
-            ClientName=DateTime.UtcNow.ToString();
+            ClientName = DateTime.UtcNow.ToString();
             Instance = this;
             GameSceneSetActive(false);
         }
 
-        void OnDestroy(){
-            if(Connected){
+        void OnDestroy()
+        {
+            if (Connected)
+            {
                 print("disconnect");
                 ws.Close();
             }
         }
 
-        public void GameSceneSetActive(bool active){
-            gameStart=active;
+        public void GameSceneSetActive(bool active)
+        {
+            gameStart = active;
             gameCamera.SetActive(active);
             gameLight.SetActive(active);
             menuRoot.SetActive(!active);
             gameCanvas.SetActive(active);
-            RenderSettings.skybox=active?gameSkyBox:menuSkyBox;
+            RenderSettings.skybox = active ? gameSkyBox : menuSkyBox;
         }
 
 
@@ -82,8 +88,9 @@ namespace Nano
             ws.Connect();
             ws.OnMessage += (sender, e) => NetReceive(e.Data);
             print($"connected");
-            NetSend(new NetGreet(){
-                ClientName=ClientName,
+            NetSend(new NetGreet()
+            {
+                ClientName = ClientName,
             });
         }
 
@@ -96,13 +103,13 @@ namespace Nano
         }
 
 
-        public void SetWebSocket(WebSocket ws)=>this.ws=ws;
+        public void SetWebSocket(WebSocket ws) => this.ws = ws;
         public void NetSend<T>(T data)
         {
             if (Connected)
             {
-                string type=data.GetType().Name;
-                string json=JsonConvert.SerializeObject(data);
+                string type = data.GetType().Name;
+                string json = JsonConvert.SerializeObject(data);
                 print($"@ {type}");
                 print($"> {json}");
                 ws.Send($"{type}@{json}");
@@ -127,10 +134,12 @@ namespace Nano
                     };
                     NetSend(msg);
                 }
-                if(Input.GetKeyDown(KeyCode.Delete)){
+                if (Input.GetKeyDown(KeyCode.Delete))
+                {
                     NetSend(new NetEndRound());
                 }
-                if(Input.GetKeyDown(KeyCode.Backspace)){
+                if (Input.GetKeyDown(KeyCode.Backspace))
+                {
                     NetSend(new NetRollback());
                 }
             }
