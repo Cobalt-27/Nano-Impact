@@ -21,7 +21,7 @@ namespace Nano
         private GameObject supervisedRoot;
         void Start()
         {
-            supervisedRoot=new GameObject("Supervised");
+            supervisedRoot = new GameObject("Supervised");
         }
 
         // Update is called once per frame
@@ -47,6 +47,7 @@ namespace Nano
             switch (name)
             {
                 case "ServerSetMap":
+                    Main.Instance.GameSceneSetActive(false);
                     mapInstance.GetComponent<Map>().NetUpdate(To<ServerSetMap>(json));
                     break;
                 case "ServerSetUnits":
@@ -59,8 +60,7 @@ namespace Nano
                     print(To<ClientPrint>(json).content);
                     break;
                 case "ServerEndGame":
-                    Main.Instance.GameSceneSetActive(false);
-                    GameEndPage.Instance.Show(To<ServerEndGame>(json).Winner==Main.Instance.MyFaction);
+                    GameEndPage.Instance.Show(To<ServerEndGame>(json).Winner);
                     break;
                 case "ClientShow":
                     UIController.Instance.setNetBar(To<ClientShow>(json).content);
@@ -71,11 +71,12 @@ namespace Nano
                 case "NetSetSaveInfo":
                     StartSceneController.Instance.SetSaveInfo(To<NetSetSaveInfo>(json));
                     break;
-                case "ServerSetFaction":
+                case "ServerStartGame":
                     Main.Instance.GameSceneSetActive(true);
-                    var fac=To<ServerSetFaction>(json).Faction;
-                    Main.Instance.MyFaction=fac;
-                    print($"faction is {fac}");
+                    var start = To<ServerStartGame>(json);
+                    Main.Instance.MyFaction = start.Faction;
+                    Main.Instance.GameMode=start.Mode;
+                    print($"Game start, mode={start.Mode}, faction={start.Faction}");
                     break;
                 default:
                     return;
@@ -83,8 +84,9 @@ namespace Nano
             }
         }
 
-        private void OnAttack(string id){
-            Unit.All.First(u=>u.name==id).PlayAttackAnim();
+        private void OnAttack(string id)
+        {
+            Unit.All.First(u => u.name == id).PlayAttackAnim();
         }
 
         private void Remove(string tag, IEnumerable<string> exclude)
@@ -97,7 +99,7 @@ namespace Nano
         {
             var inited = new List<GameObject>();
             var objList = GameObject.FindGameObjectsWithTag(tag).ToList();
-            var toInit = names.Except(objList.Select(o=>o.name));
+            var toInit = names.Except(objList.Select(o => o.name));
             foreach (var name in toInit)
             {
                 var o = Instantiate(prefab, Vector3.zero, Quaternion.identity);

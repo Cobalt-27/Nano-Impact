@@ -8,6 +8,9 @@ namespace Nano
     {
         
     }
+    public enum GameMode{
+        Singleplay,Multiplay
+    }
     public enum Character
     {
         Angelina,Eyjafjalla,Amiya,Skadi,Surtr,Kaltsit

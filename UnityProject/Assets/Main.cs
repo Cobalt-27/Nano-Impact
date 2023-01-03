@@ -40,7 +40,8 @@ namespace Nano
         public readonly string IP = "localhost";
         public readonly int port = 7777;
         public string ClientName { get; private set; }
-        public Faction MyFaction {get;set;}
+        public Faction MyFaction { get; set; }
+        public GameMode GameMode { get; set; }
 
         #region Consts
         public static readonly int MaxHealth = 100;
