@@ -76,8 +76,8 @@ namespace Nano
                     break;
             }
         }
-        public static int Distance(int row0,int col0,int row1,int col1){
-            return Math.Abs(row0-row1)+Math.Abs(col0-col1);
+        public static double Distance(int row0,int col0,int row1,int col1){
+            return Math.Sqrt(Math.Pow(row0-row1,2)+Math.Pow(col0-col1,2));
         }
         // Start is called before the first frame update
         void Start()
