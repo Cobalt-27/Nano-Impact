@@ -725,7 +725,7 @@ Light:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 410087039}
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 10
   m_Type: 1
   m_Shape: 0
@@ -3819,7 +3819,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   handler: {fileID: 1995684080}
   gameLight: {fileID: 410087039}
-  menuLight: {fileID: 1735439608}
+  menuRoot: {fileID: 1162299478}
   gameCanvas: {fileID: 1864473586}
   gameCamera: {fileID: 330585543}
   menuCamera: {fileID: 963972449}
@@ -3906,6 +3906,10 @@ MonoBehaviour:
     type: 3}
   Eyjafjalla: {fileID: 7822686529459863330, guid: ae7c7e608df57274998c46d25ffb4873,
     type: 3}
+  Amiya: {fileID: 2149233266811583879, guid: 1b493c6757303674cae6d2ddd7f0275b, type: 3}
+  Skadi: {fileID: 8259689228617291274, guid: 43dcfcb87e3decc4183a2225fb81da49, type: 3}
+  Kaltsit: {fileID: 403818533123510807, guid: 5227ee07aa5855142bd53d9cee63cdc5, type: 3}
+  Surtr: {fileID: 8853513292718872527, guid: 358c9dc9378e93a43b2d088700e7a199, type: 3}
 --- !u!1 &2007361415
 GameObject:
   m_ObjectHideFlags: 0

@@ -34,7 +34,7 @@ namespace Nano
         private readonly string animSelected="touch";
         private readonly string animMove="move";
         private readonly string animAttack="attack";
-        private UnitResources resources => GameObject.FindObjectOfType<UnitResources>();
+        private UnitResources resources => UnitResources.Instance;
         public Block Block => Map.Instance.BlockSet[Row, Col];
 
         public static IEnumerable<Unit> All => GameObject.FindObjectsOfType<Unit>();

@@ -7,21 +7,26 @@ namespace Nano
 {
     public class UnitResources : MonoBehaviour
     {
-        public GameObject Angelina,Eyjafjalla;
+        public static UnitResources Instance{get;private set;}
+        public GameObject Angelina,Eyjafjalla,Amiya,Skadi,Kaltsit,Surtr;
         // Start is called before the first frame update
         void Start()
         {
-        
+            Instance=this;
         }
 
         // Update is called once per frame
         void Update()
         {
-        
+            
         }
         public GameObject GetSprite(Character c)=> c switch{
             Character.Angelina=>Angelina,
             Character.Eyjafjalla=>Eyjafjalla,
+            Character.Amiya=>Amiya,
+            Character.Skadi=>Skadi,
+            Character.Kaltsit=>Kaltsit,
+            Character.Surtr=>Surtr,
             _=> throw new NotImplementedException(),
         };
     }

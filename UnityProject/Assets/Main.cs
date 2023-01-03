@@ -58,11 +58,16 @@ namespace Nano
             GameSceneSetActive(false);
         }
 
+        void OnDestroy(){
+            if(Connected){
+                print("disconnect");
+                ws.Close();
+            }
+        }
 
         public void GameSceneSetActive(bool active){
             gameStart=active;
             gameCamera.SetActive(active);
-            // menuCamera.SetActive(!active);
             gameLight.SetActive(active);
             menuRoot.SetActive(!active);
             gameCanvas.SetActive(active);
