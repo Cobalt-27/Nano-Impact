@@ -47,7 +47,6 @@ namespace Nano
             switch (name)
             {
                 case "ServerSetMap":
-                    Main.Instance.GameSceneSetActive(true);
                     mapInstance.GetComponent<Map>().NetUpdate(To<ServerSetMap>(json));
                     break;
                 case "ServerSetUnits":
@@ -61,6 +60,7 @@ namespace Nano
                     break;
                 case "ServerEndGame":
                     Main.Instance.GameSceneSetActive(false);
+                    GameEndPage.Instance.Show(To<ServerEndGame>(json).Winner==Main.Instance.MyFaction);
                     break;
                 case "ClientShow":
                     UIController.Instance.setNetBar(To<ClientShow>(json).content);
@@ -70,6 +70,12 @@ namespace Nano
                     break;
                 case "NetSetSaveInfo":
                     StartSceneController.Instance.SetSaveInfo(To<NetSetSaveInfo>(json));
+                    break;
+                case "ServerSetFaction":
+                    Main.Instance.GameSceneSetActive(true);
+                    var fac=To<ServerSetFaction>(json).Faction;
+                    Main.Instance.MyFaction=fac;
+                    print($"faction is {fac}");
                     break;
                 default:
                     return;

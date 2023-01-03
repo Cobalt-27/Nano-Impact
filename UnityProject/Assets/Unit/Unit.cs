@@ -25,6 +25,7 @@ namespace Nano
 
         public Faction Faction { get; private set; }
         private GameObject unitSprite = null;
+        private GameObject healthBar=null;
         private Animator animator=>unitSprite.GetComponent<Animator>();
         [SerializeField]
         private float yOffset = 2.6f;
@@ -84,6 +85,9 @@ namespace Nano
             {
                 SetupSprite();
             }
+            Debug.Assert(healthBar!=null);
+            Debug.Assert(healthBar.TryGetComponent<HealthBar>(out var c)!=false);
+            healthBar.GetComponent<HealthBar>().Health=Life;
 
         }
         private void SetupSprite()
@@ -92,6 +96,8 @@ namespace Nano
             var wrapped = Instantiate(resources.GetSprite(Character), pos, Quaternion.identity);
             wrapped.transform.SetParent(gameObject.transform);
             unitSprite=wrapped.transform.Find("CharacterSprite").gameObject;
+            healthBar=Instantiate(resources.GetHealthBar(Faction),pos,Quaternion.identity);
+            healthBar.transform.SetParent(gameObject.transform);
         }
         public void OnSelected()
         {
