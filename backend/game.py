@@ -156,6 +156,9 @@ class Game:
         self.handle_read("Saving/" + SaveName+'.txt')
         self.record_for_rollback()
 
+        self.send(OperationType.ServerSetFaction.value, json.dumps({"content": "Blue"}), 0, 0)
+        self.send(OperationType.ServerSetFaction.value, json.dumps({"content": "Red"}), 1, 0)
+
     def set_map(self, Row, Col, Blocks):
         self.map = NetMap(Row, Col, Blocks)
         self.send(OperationType.ServerSetMap.value, json.dumps(self.map.package()))
