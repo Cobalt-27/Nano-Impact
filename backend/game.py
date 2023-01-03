@@ -159,7 +159,6 @@ class Game:
         if self.enable_ai:
 
             self.send(OperationType.ServerStartGame.value, json.dumps({"Faction": "Blue", "GameMode": "Singleplay"}), 0, 0)
-            self.send(OperationType.ServerStartGame.value, json.dumps({"Faction": "Red", "GameMode": "Singleplay"}), 1, 0)
 
         else:
 
