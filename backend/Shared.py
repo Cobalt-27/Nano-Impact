@@ -7,7 +7,7 @@ class OperationType(Enum):
     ServerSetUnits = 'ServerSetUnits'
     ServerSetRelics = 'ServerSetRelics'
     ServerSetBuildings = 'ServerSetBuildings'
-    ServerSetFaction = 'ServerSetFaction'
+    ServerStartGame = 'ServerStartGame'
     ClientPrint = 'ClientPrint'
     NetPlayAttack = "NetPlayAttack"
     NetPlaySound = "NetPlaySound"

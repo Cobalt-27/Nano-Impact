@@ -156,8 +156,16 @@ class Game:
         self.handle_read("Saving/" + SaveName+'.txt')
         self.record_for_rollback()
 
-        self.send(OperationType.ServerSetFaction.value, json.dumps({"content": "Blue"}), 0, 0)
-        self.send(OperationType.ServerSetFaction.value, json.dumps({"content": "Red"}), 1, 0)
+        if self.enable_ai:
+
+            self.send(OperationType.ServerStartGame.value, json.dumps({"Faction": "Blue", "GameMode": "Singleplay"}), 0, 0)
+            self.send(OperationType.ServerStartGame.value, json.dumps({"Faction": "Red", "GameMode": "Singleplay"}), 1, 0)
+
+        else:
+
+            self.send(OperationType.ServerStartGame.value, json.dumps({"Faction": "Blue", "GameMode": "Multiplay"}), 0, 0)
+            self.send(OperationType.ServerStartGame.value, json.dumps({"Faction": "Red", "GameMode": "Multiplay"}), 1, 0)
+
 
     def set_map(self, Row, Col, Blocks):
         self.map = NetMap(Row, Col, Blocks)
