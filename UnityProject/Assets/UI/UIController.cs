@@ -3,13 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Nano
 {
     public class UIController : MonoBehaviour
     {
         [SerializeField]
-        private GameObject buttonPrefab;
+        private GameObject barPrefab;
         [SerializeField]
         private GameObject leftList;
         [SerializeField]
@@ -20,6 +21,8 @@ namespace Nano
         private GameObject barTextInstance;
         [SerializeField]
         private GameObject netBarInstance;
+        [SerializeField]
+        private GameObject panelImage;
 
         private string netContent;
         private string barContent;
@@ -30,6 +33,7 @@ namespace Nano
         void Start()
         {
             Instance = this;
+            panelImage.SetActive(false);
         }
 
         // Update is called once per frame
@@ -66,26 +70,28 @@ namespace Nano
         {
 
         }
-        public void SetLeftList(IEnumerable<string> content)
+        public void SetLeftList(List<string> names,List<float> values)
         {
-            SetList(leftList, content);
+            SetList(leftList, names,values);
         }
-        public void SetRightList(IEnumerable<string> content)
+        public void SetRightList(List<string> names,List<float> values)
         {
-            SetList(rightList, content);
+            SetList(rightList, names,values);
         }
-        private void SetList(GameObject list, IEnumerable<string> content)
+        private void SetList(GameObject list, List<string> names,List<float> values)
         {
+            Debug.Assert(names.Count()==values.Count());
             foreach (Transform child in list.transform)
             {
                 Destroy(child.gameObject);
             }
-            foreach (var s in content)
+            for(int i=0;i<names.Count();i++)
             {
-
-                var instance = Instantiate(buttonPrefab, Vector3.zero, Quaternion.identity);
-                instance.transform.Find("ButtonText").GetComponent<TextMeshProUGUI>().text = s;
-                instance.transform.SetParent(list.transform);
+                var item = Instantiate(barPrefab, Vector3.zero, Quaternion.identity);
+                var stat=item.transform.GetComponent<StatBar>();
+                stat.SetText(names[i]);
+                stat.SetValue(values[i]);
+                item.transform.SetParent(list.transform);
             }
         }
         
@@ -96,6 +102,10 @@ namespace Nano
         public void SetBar(string s)
         {
             barContent = s;
+        }
+        public void SetPortrait(Sprite img){
+             panelImage.SetActive(true);
+            panelImage.GetComponent<Image>().sprite=img;
         }
         public void SetBarTemperary(string s)
         {

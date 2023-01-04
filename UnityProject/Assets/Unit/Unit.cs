@@ -106,22 +106,30 @@ namespace Nano
         public void OnSelected()
         {
             UIHandler.Instance.Select(UIHandler.SelectType.Unit, this);
-            var left = new List<string>{
-                $"Strength {Strength}",
-                $"Defence {Defence}",
-                $"Life {Life}",
-                $"Range {Range}",
-                $"Speed {Speed}",
+            var leftNames = new List<string>{
+                $"Level:{Strength}",
+                $"Life:{Life}",
+                $"Range:{Range}",
+                $"Speed:{Speed}",
             };
-            var right = new List<string>(){
-                $"Relic {RelicID}",
+            var leftValues=new List<float>{
+                Strength/50f,
+                Life/100f,
+                Range/15f,
+                Speed/15f,
+            };
+            var rightNames=new List<string>{
+                $"Relic: {RelicID}",
                 $"CanMove {CanMove}",
                 $"CanAttack {CanAttack}",
                 $"Character {Character.ToString()}",
             };
-            UIController.Instance.SetLeftList(left);
-            UIController.Instance.SetRightList(right);
+            var rightValues=new List<float>{0,0,0,0};
+            UIController.Instance.SetLeftList(leftNames,leftValues);
+            UIController.Instance.SetRightList(rightNames,rightValues);
+            UIController.Instance.SetTitle(Character.ToString());
             UIController.Instance.SetBar(Character.ToString());
+            UIController.Instance.SetPortrait(UnitResources.Instance.GetPortrait(Character));
             animator.SetTrigger(animSelected);
             PlaySound(UnitResources.VoiceType.Interact);
         }

@@ -43,6 +43,13 @@ namespace Nano
             print($"load voice at {path}");
             return Resources.Load<AudioClip>(path);
         }
+        public Sprite GetPortrait(Character c){
+            var path=Path.Join(c.ToString(),"p");
+            print($"load portrait at {path}");
+            var s=Resources.Load<Sprite>(path);
+            Debug.Assert(s!=null);
+            return s;
+        }
         // public 
     }
 }
