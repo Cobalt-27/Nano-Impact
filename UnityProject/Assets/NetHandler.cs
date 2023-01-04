@@ -31,12 +31,19 @@ namespace Nano
             {
                 foreach (var raw in MessageList)
                 {
-                    int idx = raw.IndexOf('@');
-                    string type = raw.Substring(0, idx);
-                    string json = raw.Substring(idx + 1);
-                    print($"@ {type}");
-                    print($"< {json}");
-                    Dispatch(type, json);
+                    try
+                    {
+                        int idx = raw.IndexOf('@');
+                        string type = raw.Substring(0, idx);
+                        string json = raw.Substring(idx + 1);
+                        print($"@ {type}");
+                        print($"< {json}");
+                        Dispatch(type, json);
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.LogError(e);
+                    }
                 }
                 MessageList.Clear();
             }
@@ -77,7 +84,7 @@ namespace Nano
                     Main.Instance.GameSceneSetActive(true);
                     var start = To<ServerStartGame>(json);
                     Main.Instance.MyFaction = start.Faction;
-                    Main.Instance.GameMode=start.Mode;
+                    Main.Instance.GameMode = start.Mode;
                     print($"Game start, mode={start.Mode}, faction={start.Faction}");
                     break;
                 default:
@@ -111,9 +118,10 @@ namespace Nano
             }
             return inited;
         }
-        private void ClearSupervised(){
-            var empty=new List<string>();
-            Remove(Main.UnitTag,empty);
+        private void ClearSupervised()
+        {
+            var empty = new List<string>();
+            Remove(Main.UnitTag, empty);
             // Remove(Main.bui)
         }
         private void OnSetUnits(ServerSetUnits args)

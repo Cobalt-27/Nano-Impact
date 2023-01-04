@@ -123,13 +123,16 @@ namespace Nano
             UIController.Instance.SetRightList(right);
             UIController.Instance.SetBar(Character.ToString());
             animator.SetTrigger(animSelected);
+            PlaySound(UnitResources.VoiceType.Interact);
         }
         public void OnSetAsTarget()
         {
-            // UIHandler.Instance.Target(UIHandler.TargetType.Unit)
+            throw new NotImplementedException();// units are not targetted, blocks are
         }
+        private void PlaySound(UnitResources.VoiceType t)=>AudioController.Instance.Source.PlayOneShot(UnitResources.Instance.GetVoice(Character,t));
         public void PlayAttackAnim(){
             animator.SetTrigger(animAttack);
+            PlaySound(UnitResources.VoiceType.Attack);
         }
     }
 }

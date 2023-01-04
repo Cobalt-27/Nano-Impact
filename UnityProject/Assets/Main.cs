@@ -29,12 +29,9 @@ namespace Nano
         private GameObject gameCamera;
         [SerializeField]
         private GameObject menuCamera;
-        [SerializeField]
-        private Material menuSkyBox;
-        [SerializeField]
-        private Material gameSkyBox;
 
         private bool gameStart = false;
+        private bool postStart=false;
 
 
         public readonly string IP = "localhost";
@@ -56,11 +53,14 @@ namespace Nano
         // Start is called before the first frame update
         void Start()
         {
-            ClientName = DateTime.UtcNow.ToString();
+            
             Instance = this;
+            
+        }
+        private void PostStart(){
+            ClientName = DateTime.UtcNow.ToString();
             GameSceneSetActive(false);
         }
-
         void OnDestroy()
         {
             if (Connected)
@@ -77,7 +77,9 @@ namespace Nano
             gameLight.SetActive(active);
             menuRoot.SetActive(!active);
             gameCanvas.SetActive(active);
-            RenderSettings.skybox = active ? gameSkyBox : menuSkyBox;
+            var bgm=active?BGMController.BGMType.Game:BGMController.BGMType.Menu;
+            BGMController.Instance.PlayBGM(bgm);
+            // RenderSettings.skybox = active ? gameSkyBox : menuSkyBox;
         }
 
 
@@ -124,6 +126,10 @@ namespace Nano
         // Update is called once per frame
         void Update()
         {
+            if(!postStart){
+                postStart=true;
+                PostStart();
+            }
             if (Connected)
             {
                 if (Input.GetKeyDown(KeyCode.O))

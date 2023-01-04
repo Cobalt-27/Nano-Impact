@@ -976,8 +976,9 @@ MonoBehaviour:
       m_Calls: []
   m_text: Press any key to continue
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 3bfa92947d69ebb439b8be1b59660275, type: 2}
+  m_sharedMaterial: {fileID: -8746238959631720810, guid: 3bfa92947d69ebb439b8be1b59660275,
+    type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1382,7 +1383,7 @@ GameObject:
   - component: {fileID: 611419471}
   - component: {fileID: 611419470}
   m_Layer: 5
-  m_Name: GameEndCanvas
+  m_Name: GamePauseCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1401,7 +1402,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   title: {fileID: 1288194816}
+  subTitle: {fileID: 493399868}
   panel: {fileID: 1863581348}
+  input: {fileID: 0}
 --- !u!114 &611419471
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2408,8 +2411,9 @@ MonoBehaviour:
       m_Calls: []
   m_text: Text
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 3bfa92947d69ebb439b8be1b59660275, type: 2}
+  m_sharedMaterial: {fileID: -8746238959631720810, guid: 3bfa92947d69ebb439b8be1b59660275,
+    type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []

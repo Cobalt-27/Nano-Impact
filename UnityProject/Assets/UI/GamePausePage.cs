@@ -19,7 +19,7 @@ namespace Nano
         [SerializeField]
         private GameObject input;
         private PausePageMode mode=PausePageMode.End;
-        public static GamePausePage Instance;
+        public static GamePausePage Instance{get;private set;}
         public static readonly string PanelEnable = "enable";
         public static readonly string WinMessage = "You Win :)";
         public static readonly string LoseMessage = "You Lose :(";
