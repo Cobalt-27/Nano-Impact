@@ -13,8 +13,6 @@ namespace Nano
         [SerializeField]
         private GameObject unitPrefab;
         [SerializeField]
-        private GameObject relicPrefab;
-        [SerializeField]
         private GameObject buildingPrefab;
         public List<string> MessageList;
         // Start is called before the first frame update
