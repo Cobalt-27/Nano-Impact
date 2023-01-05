@@ -117,7 +117,8 @@ namespace Nano
             netContent=s;
         }
         public void PopMessage(int row,int col,string s){
-            Instantiate(popupPrefab,Map.Instance.BlockSet[row,col].Top,Quaternion.identity);
+            var pop=Instantiate(popupPrefab,Map.Instance.BlockSet[row,col].Top,Quaternion.identity);
+            pop.GetComponent<Popup>().SetText(s);
         }
     }
 }
