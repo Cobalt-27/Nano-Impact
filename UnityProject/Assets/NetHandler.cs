@@ -67,7 +67,7 @@ namespace Nano
                     print(To<ClientPrint>(json).content);
                     break;
                 case "ServerEndGame":
-                    GamePausePage.Instance.ShowGameEnd(To<ServerEndGame>(json).Winner);
+                    GameEndPage.Instance.ShowGameEnd(To<ServerEndGame>(json).Winner);
                     Main.Instance.GameSceneSetActive(false);
                     ClearSupervised();
                     break;

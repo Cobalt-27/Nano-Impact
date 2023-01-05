@@ -37,6 +37,8 @@ namespace Nano
             }
         }
         private void HandleRotate(){
+            if(Main.Instance.BoardState!=Main.KeyBoardState.Game)
+                return;
             if(Input.GetKey(KeyCode.Q)){
                 gameObject.transform.Rotate(Vector3.down*rotateSpeed,Space.Self);
             }

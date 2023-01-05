@@ -11,6 +11,11 @@ namespace Nano
 {
     public class Main : MonoBehaviour
     {
+        public enum KeyBoardState
+        {
+            Game, Save
+        }
+        public KeyBoardState BoardState = KeyBoardState.Game;
         public static Main Instance { get; private set; }
         public bool Connected
         {
@@ -31,7 +36,7 @@ namespace Nano
         private GameObject menuCamera;
 
         private bool gameStart = false;
-        private bool postStart=false;
+        private bool postStart = false;
 
 
         public readonly string IP = "localhost";
@@ -53,11 +58,12 @@ namespace Nano
         // Start is called before the first frame update
         void Start()
         {
-            
+
             Instance = this;
-            
+
         }
-        private void PostStart(){
+        private void PostStart()
+        {
             ClientName = DateTime.UtcNow.ToString();
             GameSceneSetActive(false);
         }
@@ -77,7 +83,7 @@ namespace Nano
             gameLight.SetActive(active);
             menuRoot.SetActive(!active);
             gameCanvas.SetActive(active);
-            var bgm=active?BGMController.BGMType.Game:BGMController.BGMType.Menu;
+            var bgm = active ? BGMController.BGMType.Game : BGMController.BGMType.Menu;
             BGMController.Instance.PlayBGM(bgm);
             // RenderSettings.skybox = active ? gameSkyBox : menuSkyBox;
         }
@@ -126,27 +132,23 @@ namespace Nano
         // Update is called once per frame
         void Update()
         {
-            if(!postStart){
-                postStart=true;
+            if (!postStart)
+            {
+                postStart = true;
                 PostStart();
             }
             if (Connected)
             {
-                if (Input.GetKeyDown(KeyCode.O))
+                if (BoardState == KeyBoardState.Game)
                 {
-                    var msg = new ServerPrint()
+                    if (Input.GetKeyDown(KeyCode.Delete))
                     {
-                        content = "test msg"
-                    };
-                    NetSend(msg);
-                }
-                if (Input.GetKeyDown(KeyCode.Delete))
-                {
-                    NetSend(new NetEndRound());
-                }
-                if (Input.GetKeyDown(KeyCode.Backspace))
-                {
-                    NetSend(new NetRollback());
+                        NetSend(new NetEndRound());
+                    }
+                    if (Input.GetKeyDown(KeyCode.Backspace))
+                    {
+                        NetSend(new NetRollback());
+                    }
                 }
             }
         }

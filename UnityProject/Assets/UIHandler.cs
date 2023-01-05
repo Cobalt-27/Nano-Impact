@@ -88,7 +88,9 @@ namespace Nano
         // Update is called once per frame
         void Update()
         {
-            if (selectType == SelectType.Unit && selected as Unit != null)
+            if (Main.Instance.BoardState!=Main.KeyBoardState.Game)
+                return;
+            if (selectType == SelectType.Unit && selected as Unit != null )
             {
                 var unit = selected as Unit;
                 GameObject.FindObjectsOfType<Block>().ToList().ForEach(

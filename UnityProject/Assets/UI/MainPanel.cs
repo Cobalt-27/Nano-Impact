@@ -6,6 +6,7 @@ namespace Nano
     public class MainPanel : MonoBehaviour
     {
         private Animator animator=>gameObject.GetComponent<Animator>();
+        
         // Start is called before the first frame update
         void Start()
         {

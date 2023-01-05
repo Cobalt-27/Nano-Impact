@@ -5,21 +5,15 @@ using UnityEngine;
 
 namespace Nano
 {
-    public class GamePausePage : MonoBehaviour
+    public class GameEndPage : MonoBehaviour
     {
-        enum PausePageMode{
-            Save,End
-        }
         [SerializeField]
         private GameObject title;
         [SerializeField]
         private GameObject subTitle;
         [SerializeField]
         private GameObject panel;
-        [SerializeField]
-        private GameObject input;
-        private PausePageMode mode=PausePageMode.End;
-        public static GamePausePage Instance{get;private set;}
+        public static GameEndPage Instance{get;private set;}
         public static readonly string PanelEnable = "enable";
         public static readonly string WinMessage = "You Win :)";
         public static readonly string LoseMessage = "You Lose :(";
@@ -34,15 +28,9 @@ namespace Nano
         // Update is called once per frame
         void Update()
         {
-            if (Input.anyKeyDown && mode==PausePageMode.End)
+            if (Input.anyKeyDown)
             {
                 SetActive(false);
-            }
-            else if(Input.GetKeyDown(KeyCode.Return) &&mode==PausePageMode.Save){
-                SetActive(false);
-                Main.Instance.NetSend<NetSave>(new NetSave{
-                    Name=input.GetComponent<TextMeshProUGUI>().text
-                });
             }
         }
         private void SetTitle(string s)
@@ -58,7 +46,6 @@ namespace Nano
         }
         public void ShowGameEnd(Faction win)
         {
-            mode=PausePageMode.End;
             print($"Game end page winning={win}");
             SetActive(true);
             SetSubTitle(EndSubtitle);
