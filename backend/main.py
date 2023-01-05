@@ -1,5 +1,6 @@
 import json
 import os.path
+import datetime
 
 import websockets
 import asyncio
@@ -99,7 +100,10 @@ async def handle(ws: WebSocketServerProtocol, type, data):
     if type == 'NetStartGame':
         game = Game()
         game.restart(d['SaveName'])
-        game.enable_ai = False
+        if d['SaveName'].endswith('.ai'):
+            game.enable_ai = True
+        else:
+            game.enable_ai = False
         # await send(ws, 'ServerSetMap', json.dumps(genmap(20, 10)))
     elif type == 'NetUpgrade':
         pass
@@ -142,7 +146,8 @@ def get_save():
     for file in os.listdir('./Saving'):
         save = dict()
         save['Name'] = file
-        save['Description'] = 'No Description'
+        save_time = datetime.datetime.fromtimestamp(os.path.getmtime(os.path.join('./Saving', file)))
+        save['Description'] = datetime.datetime.strftime(save_time, "%Y-%m-%d %H:%M:%S")
         saves.append(save)
     to_dump = dict()
     to_dump['SaveInfoList'] = saves
