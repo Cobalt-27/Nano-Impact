@@ -52,7 +52,11 @@ namespace Nano
         public int Row, Col;
         public NetBlock[] Blocks;
     }
-    
+    public class PopMessage : INetMessage
+    {
+        public int Row,Col;
+        public string Content;
+    }
     public class ServerSetUnits : INetMessage
     {
         public NetUnit[] Units;
