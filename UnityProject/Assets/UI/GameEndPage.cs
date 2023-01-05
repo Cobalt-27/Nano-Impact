@@ -17,7 +17,7 @@ namespace Nano
         public static readonly string PanelEnable = "enable";
         public static readonly string WinMessage = "You Win :)";
         public static readonly string LoseMessage = "You Lose :(";
-        public static readonly string EndSubtitle="Press any key to continue";
+        public static readonly string EndSubtitle="Left click to continue";
         // Start is called before the first frame update
         void Start()
         {
@@ -28,7 +28,7 @@ namespace Nano
         // Update is called once per frame
         void Update()
         {
-            if (Input.anyKeyDown)
+            if (Input.GetMouseButtonDown(0))
             {
                 SetActive(false);
             }

@@ -53,6 +53,7 @@ namespace Nano
         public int Row, Col;
         public NetBlock[] Blocks;
     }
+    
     public class ServerSetUnits : INetMessage
     {
         public NetUnit[] Units;
@@ -64,11 +65,15 @@ namespace Nano
 
     public class ClientPrint : INetMessage
     {
-        public string content;
+        public string Content;
+    }
+
+    public class ClientInfo: INetMessage{
+        public string Content;
     }
 
     public class ClientShow : INetMessage{
-        public string content;
+        public string Content;
     }
 
     public class NetSetSaveInfo : INetMessage

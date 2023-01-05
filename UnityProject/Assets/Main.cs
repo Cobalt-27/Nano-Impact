@@ -141,6 +141,9 @@ namespace Nano
             {
                 if (BoardState == KeyBoardState.Game)
                 {
+                    if(Input.GetKeyDown(KeyCode.Escape)){
+                        NetSend(new NetQuit());
+                    }
                     if (Input.GetKeyDown(KeyCode.Delete))
                     {
                         NetSend(new NetEndRound());
