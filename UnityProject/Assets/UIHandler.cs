@@ -9,75 +9,52 @@ namespace Nano
     public class UIHandler : MonoBehaviour
     {
         public static UIHandler Instance;
-        public enum SelectType
-        {
-            Empty,
-            Unit,
-            Relic,
-        }
-        public enum TargetType
-        {
-            Block,
-        }
-        private Component selected = null;
-        private SelectType selectType;
+        public Unit SelectedUnit { get; private set; } = null;
 
         public void DeSelect()
         {
-            selectType = SelectType.Empty;
-            selected = null;
+            SelectedUnit = null;
         }
-        public void Select(SelectType type, Component obj)
+        public void Select(Unit obj)
         {
-            if (obj != selected)
+            if (obj != SelectedUnit)
             {
-                print($"select {obj.name} {type}");
+                print($"select {obj.name}");
             }
-            selectType = type;
-            selected = obj;
+            SelectedUnit = obj;
         }
-        public void Target(TargetType type, Component c)
+        public void Target(Block block)
         {
-            if (selected == null)
+            if (SelectedUnit == null)
             {
                 print("select an object first");
                 return;
             }
-            print($"targetting {c.gameObject.name} {type} from {selected.name} {selectType}");
-            switch (type)
+            print($"targetting {block.gameObject.name} from {SelectedUnit.name}");
+            Debug.Assert(block != null);
+            var from = SelectedUnit as Unit;
+            Debug.Assert(from != null);
+            if (block.Unit != null)
             {
-                case TargetType.Block:
-                    var block = c as Block;
-                    Debug.Assert(block != null);
-                    if (selectType == SelectType.Unit)
-                    {
-                        var from = selected as Unit;
-                        Debug.Assert(from != null);
-                        if (block.Unit != null)
-                        {
-                            Main.Instance.NetSend(new NetInteract()
-                            {
-                                From = from.name,
-                                To = block.Unit.name,
-                            });
-                        }
-                        else
-                        {
-                            Main.Instance.NetSend(new NetMove()
-                            {
-                                ID = selected.gameObject.name,
-                                Row = block.Row,
-                                Col = block.Col,
-                            });
-                        }
-                    }
-                    break;
-                default:
-                    break;
+                Main.Instance.NetSend(new NetInteract()
+                {
+                    From = from.name,
+                    To = block.Unit.name,
+                });
+            }
+            else
+            {
+                Main.Instance.NetSend(new NetMove()
+                {
+                    ID = SelectedUnit.gameObject.name,
+                    Row = block.Row,
+                    Col = block.Col,
+                });
             }
         }
-        public static double Distance(int row0,int col0,int row1,int col1){
-            return Math.Sqrt(Math.Pow(row0-row1,2)+Math.Pow(col0-col1,2));
+        public static double Distance(int row0, int col0, int row1, int col1)
+        {
+            return Math.Sqrt(Math.Pow(row0 - row1, 2) + Math.Pow(col0 - col1, 2));
         }
         // Start is called before the first frame update
         void Start()
@@ -88,11 +65,11 @@ namespace Nano
         // Update is called once per frame
         void Update()
         {
-            if (Main.Instance.BoardState!=Main.KeyBoardState.Game)
+            if (Main.Instance.BoardState != Main.KeyBoardState.Game)
                 return;
-            if (selectType == SelectType.Unit && selected as Unit != null )
+            if (SelectedUnit != null)
             {
-                var unit = selected as Unit;
+                var unit = SelectedUnit as Unit;
                 GameObject.FindObjectsOfType<Block>().ToList().ForEach(
                     b => b.EnableOverlay = false
                 );
@@ -124,7 +101,8 @@ namespace Nano
                         .Where(u => u.CanAttack)
                         .ToList().ForEach(u => u.Block.EnableOverlay = true);
                 }
-                else if(Input.GetKey(KeyCode.I)){
+                else if (Input.GetKey(KeyCode.I))
+                {
                     unit.PlayAttackAnim();
                 }
                 else if (unit != null)

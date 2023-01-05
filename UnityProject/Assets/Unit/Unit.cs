@@ -9,6 +9,7 @@ namespace Nano
 {
     public class Unit : MonoBehaviour
     {
+        public string ID => gameObject.name;
         public Character Character { get; private set; }
         public UnitType Type { get; private set; }
         public int Row { get; private set; }
@@ -21,20 +22,20 @@ namespace Nano
         public int Level { get; private set; }
         public bool CanMove { get; private set; }
         public bool CanAttack { get; private set; }
-        private string RelicID;
-        private bool firstUpdate=true;
+        public string RelicID {get;private set;}
+        private bool firstUpdate = true;
         public Faction Faction { get; private set; }
         private GameObject unitSprite = null;
-        private GameObject healthBar=null;
-        private Animator animator=>unitSprite.GetComponent<Animator>();
+        private GameObject healthBar = null;
+        private Animator animator => unitSprite.GetComponent<Animator>();
         [SerializeField]
         private float yOffset = 2.6f;
         [SerializeField]
         private float speed = 0.1f;
 
-        private readonly string animSelected="touch";
-        private readonly string animMove="move";
-        private readonly string animAttack="attack";
+        private readonly string animSelected = "touch";
+        private readonly string animMove = "move";
+        private readonly string animAttack = "attack";
         private UnitResources resources => UnitResources.Instance;
         public Block Block => Map.Instance.BlockSet[Row, Col];
 
@@ -54,9 +55,9 @@ namespace Nano
             var delta = moveTo - gameObject.transform.position;
             if (delta.magnitude > speed)
             {
-                gameObject.transform.Translate(delta.normalized*speed);
+                gameObject.transform.Translate(delta.normalized * speed);
                 animator.SetBool(animMove, true);
-                unitSprite.GetComponent<SpriteRenderer>().flipX=delta.z<0;
+                unitSprite.GetComponent<SpriteRenderer>().flipX = delta.z < 0;
             }
             else
             {
@@ -80,18 +81,19 @@ namespace Nano
             RelicID = data.RelicID;
             Faction = data.Faction;
             Speed = data.Speed;
-            if(firstUpdate){
-                firstUpdate=false;
-                gameObject.transform.position= Block.Top;
+            if (firstUpdate)
+            {
+                firstUpdate = false;
+                gameObject.transform.position = Block.Top;
             }
 
             if (unitSprite == null)
             {
                 SetupSprite();
             }
-            Debug.Assert(healthBar!=null);
-            Debug.Assert(healthBar.TryGetComponent<HealthBar>(out var c)!=false);
-            healthBar.GetComponent<HealthBar>().Health=Life;
+            Debug.Assert(healthBar != null);
+            Debug.Assert(healthBar.TryGetComponent<HealthBar>(out var c) != false);
+            healthBar.GetComponent<HealthBar>().Health = Life;
 
         }
         private void SetupSprite()
@@ -99,34 +101,40 @@ namespace Nano
             var pos = gameObject.transform.position + Vector3.up * yOffset;
             var wrapped = Instantiate(resources.GetSprite(Character), pos, Quaternion.identity);
             wrapped.transform.SetParent(gameObject.transform);
-            unitSprite=wrapped.transform.Find("CharacterSprite").gameObject;
-            healthBar=Instantiate(resources.GetHealthBar(Faction),pos,Quaternion.identity);
+            unitSprite = wrapped.transform.Find("CharacterSprite").gameObject;
+            healthBar = Instantiate(resources.GetHealthBar(Faction), pos, Quaternion.identity);
             healthBar.transform.SetParent(gameObject.transform);
         }
+        public string RelicVerbose(string relic)=> relic switch{
+            "R0"=>"Circles of Logos",
+            "R1"=>"Flower of Life",
+            "R2"=>"Goblet of Eonothem",
+            _=>throw new NotImplementedException(),
+        };
         public void OnSelected()
         {
-            UIHandler.Instance.Select(UIHandler.SelectType.Unit, this);
+            UIHandler.Instance.Select(this);
             var leftNames = new List<string>{
                 $"Level:{Strength}",
                 $"Life:{Life}",
                 $"Range:{Range}",
                 $"Speed:{Speed}",
             };
-            var leftValues=new List<float>{
+            var leftValues = new List<float>{
                 Strength/50f,
                 Life/100f,
                 Range/15f,
                 Speed/15f,
             };
-            var rightNames=new List<string>{
-                $"Relic: {RelicID}",
+            var rightNames = new List<string>{
+                $"Relic: {RelicVerbose(RelicID)}",
                 $"CanMove {CanMove}",
                 $"CanAttack {CanAttack}",
                 $"Character {Character.ToString()}",
             };
-            var rightValues=new List<float>{0,0,0,0};
-            UIController.Instance.SetLeftList(leftNames,leftValues);
-            UIController.Instance.SetRightList(rightNames,rightValues);
+            var rightValues = new List<float> { 0, 0, 0, 0 };
+            UIController.Instance.SetLeftList(leftNames, leftValues);
+            UIController.Instance.SetRightList(rightNames, rightValues);
             UIController.Instance.SetTitle(Character.ToString());
             UIController.Instance.SetBar(Character.ToString());
             UIController.Instance.SetPortrait(UnitResources.Instance.GetPortrait(Character));
@@ -137,8 +145,9 @@ namespace Nano
         {
             throw new NotImplementedException();// units are not targetted, blocks are
         }
-        private void PlaySound(UnitResources.VoiceType t)=>AudioController.Instance.Source.PlayOneShot(UnitResources.Instance.GetVoice(Character,t));
-        public void PlayAttackAnim(){
+        private void PlaySound(UnitResources.VoiceType t) => AudioController.Instance.Source.PlayOneShot(UnitResources.Instance.GetVoice(Character, t));
+        public void PlayAttackAnim()
+        {
             animator.SetTrigger(animAttack);
             PlaySound(UnitResources.VoiceType.Attack);
         }

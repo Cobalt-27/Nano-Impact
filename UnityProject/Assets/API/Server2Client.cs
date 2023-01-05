@@ -30,7 +30,6 @@ namespace Nano
     }
     public class NetRelic
     {
-        public string ID;
         public RelicType Type;
     }
 
