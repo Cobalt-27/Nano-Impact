@@ -23,6 +23,8 @@ namespace Nano
         private GameObject netBarInstance;
         [SerializeField]
         private GameObject panelImage;
+        [SerializeField]
+        private GameObject popupPrefab;
 
         private string netContent;
         private string barContent;
@@ -111,9 +113,11 @@ namespace Nano
         {
             barContentTemp = s;
         }
-        public void setNetBar(string s){
+        public void SetNetBar(string s){
             netContent=s;
         }
-        
+        public void PopMessage(int row,int col,string s){
+            Instantiate(popupPrefab,Map.Instance.BlockSet[row,col].Top,Quaternion.identity);
+        }
     }
 }

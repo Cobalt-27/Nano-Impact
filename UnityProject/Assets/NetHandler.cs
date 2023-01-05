@@ -72,7 +72,7 @@ namespace Nano
                     ClearSupervised();
                     break;
                 case "ClientShow":
-                    UIController.Instance.setNetBar(To<ClientShow>(json).Content);
+                    UIController.Instance.SetNetBar(To<ClientShow>(json).Content);
                     break;
                 case "NetPlayAttack":
                     OnAttack(To<NetPlayAttack>(json).ID);
@@ -86,6 +86,10 @@ namespace Nano
                     Main.Instance.MyFaction = start.Faction;
                     Main.Instance.GameMode = start.Mode;
                     print($"Game start, mode={start.Mode}, faction={start.Faction}");
+                    break;
+                case "PopMessage":
+                    var data=To<PopMessage>(json);
+                    UIController.Instance.PopMessage(data.Row,data.Col,data.Content);
                     break;
                 default:
                     return;
