@@ -130,7 +130,7 @@ async def handle(ws: WebSocketServerProtocol, type, data):
                 await send(c.ws, type, content)
         else:
             await send(search_client(target).ws, type, content)
-
+    print('handle end')
         # for ws in clients:
         #     await send(clients[ws], type, content)
 
