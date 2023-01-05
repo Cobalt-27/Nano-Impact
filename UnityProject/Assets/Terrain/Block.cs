@@ -67,7 +67,6 @@ namespace Nano
             if (BlockType != BlockType.Empty)
             {
                 Overlay.SetActive(EnableOverlay);
-
             }
         }
     }

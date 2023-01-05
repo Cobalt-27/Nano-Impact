@@ -153,7 +153,7 @@ class Game:
         self.toSend = []
         self.step = 0
 
-        self.handle_read("Saving/" + SaveName+'.txt')
+        self.handle_read("Saving/" + SaveName)
         self.record_for_rollback()
 
         if self.enable_ai:
