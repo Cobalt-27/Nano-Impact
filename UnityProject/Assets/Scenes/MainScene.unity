@@ -6859,7 +6859,6 @@ MonoBehaviour:
   mapInstance: {fileID: 887749179}
   unitPrefab: {fileID: 5078403109830617430, guid: dccb3c24e90283048b759fe740a0e594,
     type: 3}
-  relicPrefab: {fileID: 0}
   buildingPrefab: {fileID: 3778435589196374447, guid: 46fbcd114db63e243beedb55dc6fbeaf,
     type: 3}
   MessageList: []
@@ -6895,7 +6894,7 @@ MonoBehaviour:
   barTextInstance: {fileID: 1837994190}
   netBarInstance: {fileID: 900917981}
   panelImage: {fileID: 750636675}
-  popupPrefab: {fileID: 2566920225544691390, guid: 050343729bc19b64c85170b3c6adf925,
+  popupPrefab: {fileID: 8767181565945759433, guid: 050343729bc19b64c85170b3c6adf925,
     type: 3}
 --- !u!114 &1995684084
 MonoBehaviour:
