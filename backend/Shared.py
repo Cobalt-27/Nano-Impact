@@ -12,6 +12,7 @@ class OperationType(Enum):
     NetPlayAttack = "NetPlayAttack"
     NetPlaySound = "NetPlaySound"
     ClientShow = "ClientShow"
+    ClientInfo = "ClientInfo"
 
 
 class BuildingType(Enum):

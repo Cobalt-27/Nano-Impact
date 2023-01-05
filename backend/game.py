@@ -1,4 +1,5 @@
 import json
+import os
 import random
 import time
 
@@ -390,17 +391,26 @@ class Game:
         self.set_relic(relic)
         self.handle_show()
 
+    def handle_client_save(self, Name):
+        filenames = os.listdir('Saving')
+        for file in filenames:
+            if Name == file:
+                self.send(OperationType.ClientInfo.value, json.dumps({"Content": "Repeated name"}))
+                return
+        self.handle_save(Name)
+        self.send(OperationType.ClientInfo.value, json.dumps({"Content": "Save successfully"}))
+
     def handle_show(self):
         if self.player:
-            self.send(OperationType.ClientShow.value, json.dumps({"content": "Blue"}))
+            self.send(OperationType.ClientShow.value, json.dumps({"Content": "Blue"}))
         else:
-            self.send(OperationType.ClientShow.value, json.dumps({"content": "Red"}))
+            self.send(OperationType.ClientShow.value, json.dumps({"Content": "Red"}))
 
     def handle_quit(self):
         if self.player:
-            self.send(OperationType.ServerEndGame.value, json.dumps({"content": "Red"}))
+            self.send(OperationType.ServerEndGame.value, json.dumps({"Winner": "Red"}))
         else:
-            self.send(OperationType.ServerEndGame.value, json.dumps({"content": "Blue"}))
+            self.send(OperationType.ServerEndGame.value, json.dumps({"Winner": "Blue"}))
 
     def package_list(self, data, type=None):
         d = []
@@ -476,6 +486,7 @@ if __name__ == '__main__':
     g.restart("player-to-player")
     g.handle_endRound()
     g.handle_endRound()
+    g.handle_client_save("try.txt")
 
     for i in g.toSend:
         print(i[0], ">", i[1], i[2], i[3])
