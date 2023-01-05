@@ -240,7 +240,7 @@ class Game:
 
     def pop_message(self, message, Row, Col):
         self.send(OperationType.PopMessage.value,
-                  json.dumps({"Row": Row, "Col": Col, "Content": message}))
+                  json.dumps({"Row": Row, "Col": Col, "Content": message}), -1, 1)
 
     def LevelUp(self, unit, value):
         unit.Strength += value
@@ -496,10 +496,10 @@ class Game:
 
 if __name__ == '__main__':
     g = Game()
-    g.restart("player-to-player")
-    g.handle_endRound()
-    g.handle_endRound()
-    g.handle_client_save("try.txt")
+    g.restart("default")
+    g.enable_ai = False
+    g.handle_move("C1", 2, 2)
+    g.handle_interact("C1", "C2")
 
     for i in g.toSend:
         print(i[0], ">", i[1], i[2], i[3])
