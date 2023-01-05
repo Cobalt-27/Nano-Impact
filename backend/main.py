@@ -11,7 +11,7 @@ from websockets.server import WebSocketServerProtocol
 
 game = Game()
 clients = []
-multiplayer = False
+multiplayer = True
 
 
 class ClientInfo:
@@ -64,13 +64,25 @@ async def handle(ws: WebSocketServerProtocol, type, data):
         if type != 'NetGreet' and len(clients) < 2:
             # await ws.close()
             return
+        if type == 'NetGreet':
+            client = search_client(d['ClientName'])
+            if client is not None:
+                await client.ws.close()
+                clients.remove(client)
+                print(f'close socket with {client.addr} because reconnect')
         if type == 'NetGreet' and len(clients) >= 2 and search_client(addr) is None:
             print(f'close socket with {addr} because full client')
             await ws.close()
             return
         if type == 'NetGreet':
-            clients.append(ClientInfo(addr, d['ClientName'], len(clients), ws))
-            game.getbuf().append(('NetSetSaveInfo', get_save(), -1, 0))
+            client_index = 0
+            if len(clients) > 0 and clients[0].index == 0:
+                client_index = 1
+            clients.append(ClientInfo(addr, d['ClientName'], client_index, ws))
+            if game.map is None:
+                game.getbuf().append(('NetSetSaveInfo', get_save(), -1, 0))
+            else:
+                game.handle_resume(client_index)
             if len(clients) == 1:
                 game.getbuf().append(('ClientShow', generate_message('Waiting'), 0, 0))
         # Throw wrong packets
@@ -78,8 +90,8 @@ async def handle(ws: WebSocketServerProtocol, type, data):
         cur_index = 1
         if game.player:
             cur_index = 0
-        print(cur_index)
-        print(c.index)
+        # print(cur_index)
+        # print(c.index)
         if c is None or (type not in ['NetGreet', 'NetStartGame'] and c.index != cur_index):
             print(f'Unsupported {type} command from opposite')
             return
@@ -99,11 +111,11 @@ async def handle(ws: WebSocketServerProtocol, type, data):
                 return
     if type == 'NetStartGame':
         game = Game()
-        game.restart(d['SaveName'])
         if d['SaveName'].endswith('.ai'):
             game.enable_ai = True
         else:
             game.enable_ai = False
+        game.restart(d['SaveName'])
         # await send(ws, 'ServerSetMap', json.dumps(genmap(20, 10)))
     elif type == 'NetUpgrade':
         pass
@@ -129,11 +141,18 @@ async def handle(ws: WebSocketServerProtocol, type, data):
     print('prepare to send')
     for type, content, target, delay in game.getbuf():
         await asyncio.sleep(delay)
-        if target == -1:
+        if target == -1 or (not multiplayer):
             for c in clients:
                 await send(c.ws, type, content)
         else:
-            await send(search_client(target).ws, type, content)
+            send_client = search_client(target)
+            if send_client is not None:
+                await send(search_client(target).ws, type, content)
+        if type == 'ServerEndGame':
+            for c in clients:
+                print(f'close socket with {c.addr} because reconnect')
+                await c.ws.close()
+            clients = []
     print('handle end')
         # for ws in clients:
         #     await send(clients[ws], type, content)

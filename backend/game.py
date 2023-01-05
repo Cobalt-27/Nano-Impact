@@ -403,6 +403,18 @@ class Game:
         self.set_relic(relic)
         self.handle_show()
 
+    def handle_resume(self, index):
+        if index == 0:
+            color = 'Blue'
+        else:
+            color = 'Red'
+        self.send(OperationType.ServerSetMap.value, json.dumps(self.map.package()), target=index)
+        self.send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"), target=index)
+        self.send(OperationType.ServerSetBuildings.value, self.package_list(self.buildings, "Buildings"), target=index)
+        self.send(OperationType.ServerSetRelics.value, self.package_list(self.relics, "Relics"), target=index)
+        self.send(OperationType.ServerStartGame.value, json.dumps({"Faction": color, "GameMode": "Multiplay"}), target=index)
+        self.handle_show()
+
     def handle_client_save(self, Name):
         filenames = os.listdir('Saving')
         for file in filenames:
