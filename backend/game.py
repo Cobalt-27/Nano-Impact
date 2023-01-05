@@ -214,11 +214,10 @@ class Game:
                 type += 1
             if attacker.Strength - defender.Defence + type > 0:
                 defender.Life -= (attacker.Strength - defender.Defence + type)
-                self.pop_message("hurt: " + str(-(attacker.Strength - defender.Defence + type)) +
-                                 " terrain: " + str(-type)
+                self.pop_message(str(-(attacker.Strength - defender.Defence + type)) + "(" + str(-type) + ")"
                                  , defender.Row, defender.Col)
             if attacker.Strength - defender.Defence + type <= 0:
-                self.pop_message("hurt: -0; terrain: " + str(-type), defender.Row, defender.Col)
+                self.pop_message("-0", defender.Row, defender.Col)
             if defender.Life <= 0:
                 self.units.pop(defender.ID)
                 attacker.Level += defender.Level
