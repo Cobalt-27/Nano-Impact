@@ -23,10 +23,10 @@ namespace Nano
                 relicButtons.SetActive(false);
             }
             else if(s.RelicID==null||s.RelicID.Length==0){
-                relicButtons.SetActive(false);
+                relicButtons.SetActive(true);
             }
             else{
-                relicButtons.SetActive(true);
+                relicButtons.SetActive(false);
             }
         }
         public void SetRelic(int x){

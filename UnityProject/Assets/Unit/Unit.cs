@@ -94,7 +94,8 @@ namespace Nano
             Debug.Assert(healthBar != null);
             Debug.Assert(healthBar.TryGetComponent<HealthBar>(out var c) != false);
             healthBar.GetComponent<HealthBar>().Health = Life;
-
+            if(UIHandler.Instance.SelectedUnit==this)
+                SetStatUI();
         }
         private void SetupSprite()
         {
@@ -109,12 +110,12 @@ namespace Nano
             "R0"=>"Circles of Logos",
             "R1"=>"Flower of Life",
             "R2"=>"Goblet of Eonothem",
+            ""=>"To be assigned",
+            null=>"To be assigned",
             _=>throw new NotImplementedException(),
         };
-        public void OnSelected()
-        {
-            UIHandler.Instance.Select(this);
-            var leftNames = new List<string>{
+        public void SetStatUI(){
+             var leftNames = new List<string>{
                 $"Level:{Strength}",
                 $"Life:{Life}",
                 $"Range:{Range}",
@@ -138,6 +139,11 @@ namespace Nano
             UIController.Instance.SetTitle(Character.ToString());
             UIController.Instance.SetBar(Character.ToString());
             UIController.Instance.SetPortrait(UnitResources.Instance.GetPortrait(Character));
+        }
+        public void OnSelected()
+        {
+            UIHandler.Instance.Select(this);
+            SetStatUI();
             animator.SetTrigger(animSelected);
             PlaySound(UnitResources.VoiceType.Interact);
         }
