@@ -141,7 +141,7 @@ def get_save():
     saves = []
     for file in os.listdir('./Saving'):
         save = dict()
-        save['Name'] = file.split('.')[0]
+        save['Name'] = file
         save['Description'] = 'No Description'
         saves.append(save)
     to_dump = dict()

@@ -57,7 +57,7 @@ namespace Nano
         void OnRightClick()
         {
             print($"right clicking {Row} {Col}");
-            UIHandler.Instance.Target(UIHandler.TargetType.Block, this);
+            UIHandler.Instance.Target(this);
         }
 
 
@@ -67,7 +67,6 @@ namespace Nano
             if (BlockType != BlockType.Empty)
             {
                 Overlay.SetActive(EnableOverlay);
-
             }
         }
     }
