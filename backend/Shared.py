@@ -13,6 +13,7 @@ class OperationType(Enum):
     NetPlaySound = "NetPlaySound"
     ClientShow = "ClientShow"
     ClientInfo = "ClientInfo"
+    PopMessage = "PopMessage"
 
 
 class BuildingType(Enum):

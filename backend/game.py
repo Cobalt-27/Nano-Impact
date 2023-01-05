@@ -159,13 +159,15 @@ class Game:
 
         if self.enable_ai:
 
-            self.send(OperationType.ServerStartGame.value, json.dumps({"Faction": "Blue", "GameMode": "Singleplay"}), 0, 0)
+            self.send(OperationType.ServerStartGame.value, json.dumps({"Faction": "Blue", "GameMode": "Singleplay"}), 0,
+                      0)
 
         else:
 
-            self.send(OperationType.ServerStartGame.value, json.dumps({"Faction": "Blue", "GameMode": "Multiplay"}), 0, 0)
-            self.send(OperationType.ServerStartGame.value, json.dumps({"Faction": "Red", "GameMode": "Multiplay"}), 1, 0)
-
+            self.send(OperationType.ServerStartGame.value, json.dumps({"Faction": "Blue", "GameMode": "Multiplay"}), 0,
+                      0)
+            self.send(OperationType.ServerStartGame.value, json.dumps({"Faction": "Red", "GameMode": "Multiplay"}), 1,
+                      0)
 
     def set_map(self, Row, Col, Blocks):
         self.map = NetMap(Row, Col, Blocks)
@@ -212,6 +214,11 @@ class Game:
                 type += 1
             if attacker.Strength - defender.Defence + type > 0:
                 defender.Life -= (attacker.Strength - defender.Defence + type)
+                self.pop_message("hurt: " + str(-(attacker.Strength - defender.Defence + type)) +
+                                 " terrain: " + str(-type)
+                                 , defender.Row, defender.Col)
+            if attacker.Strength - defender.Defence + type <= 0:
+                self.pop_message("hurt: -0; terrain: " + str(-type), defender.Row, defender.Col)
             if defender.Life <= 0:
                 self.units.pop(defender.ID)
                 attacker.Level += defender.Level
@@ -230,6 +237,10 @@ class Game:
                 self.send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"), -1, 1)
 
             self.JudegeEnd()
+
+    def pop_message(self, message, Row, Col):
+        self.send(OperationType.PopMessage.value,
+                  json.dumps({"Row": Row, "Col": Col, "Content": message}))
 
     def LevelUp(self, unit, value):
         unit.Strength += value
@@ -350,11 +361,13 @@ class Game:
     def building_update_state(self):
         for i in self.units:
             if (self.units[i].Row - self.buildings["B1"].Row) ** 2 + \
-                    (self.units[i].Col - self.buildings["B1"].Col) ** 2 <= 5:
+                    (self.units[i].Col - self.buildings["B1"].Col) ** 2 <= 4:
                 self.LevelUp(unit=self.units[i], value=1)
+                self.pop_message("Level + 1", self.units[i].Row, self.units[i].Col)
             if (self.units[i].Row - self.buildings["B2"].Row) ** 2 + \
-                    (self.units[i].Col - self.buildings["B2"].Col) ** 2 <= 5:
+                    (self.units[i].Col - self.buildings["B2"].Col) ** 2 <= 4:
                 self.units[i].Life += 1
+                self.pop_message("Life + 1", self.units[i].Row, self.units[i].Col)
 
     def record_for_rollback(self):
         with open("RollBack/" + str(self.step), 'w') as f:
