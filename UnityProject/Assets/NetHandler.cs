@@ -64,7 +64,7 @@ namespace Nano
                     OnSetBuildings(To<ServerSetBuildings>(json));
                     break;
                 case "ClientPrint":
-                    print(To<ClientPrint>(json).content);
+                    print(To<ClientPrint>(json).Content);
                     break;
                 case "ServerEndGame":
                     GameEndPage.Instance.ShowGameEnd(To<ServerEndGame>(json).Winner);
@@ -72,7 +72,7 @@ namespace Nano
                     ClearSupervised();
                     break;
                 case "ClientShow":
-                    UIController.Instance.setNetBar(To<ClientShow>(json).content);
+                    UIController.Instance.setNetBar(To<ClientShow>(json).Content);
                     break;
                 case "NetPlayAttack":
                     OnAttack(To<NetPlayAttack>(json).ID);
