@@ -54,7 +54,7 @@ namespace Nano
             {
                 pointer++;
             }
-            if (Input.GetKeyDown(KeyCode.P) && selected != null)
+            if (Input.GetKeyDown(KeyCode.CapsLock) && selected != null)
             {
                 Main.Instance.NetSend<NetStartGame>(new NetStartGame
                 {
