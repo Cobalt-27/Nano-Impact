@@ -272,7 +272,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34edff012a364a746967638a5461fa56, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lifeSpan: 10
+  lifeSpan: 3
   textObject: {fileID: 4911747151806325532}
 --- !u!114 &6636686202300897230
 MonoBehaviour:

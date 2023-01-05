@@ -14,7 +14,7 @@ namespace Nano
         // Start is called before the first frame update
         void Start()
         {
-            // Destroy(gameObject,lifeSpan);
+            Destroy(gameObject,lifeSpan);
         }
 
         // Update is called once per frame
