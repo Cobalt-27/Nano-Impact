@@ -92,7 +92,7 @@ async def handle(ws: WebSocketServerProtocol, type, data):
             cur_index = 0
         # print(cur_index)
         # print(c.index)
-        if c is None or (type not in ['NetGreet', 'NetStartGame'] and c.index != cur_index):
+        if c is None or (type not in ['NetGreet', 'NetStartGame', 'NetRemoveSave'] and c.index != cur_index):
             print(f'Unsupported {type} command from opposite')
             return
     else:
@@ -117,6 +117,9 @@ async def handle(ws: WebSocketServerProtocol, type, data):
             game.enable_ai = False
         game.restart(d['SaveName'])
         # await send(ws, 'ServerSetMap', json.dumps(genmap(20, 10)))
+    elif type == 'NetRemoveSave':
+        delete_save(d['Name'].strip())
+        game.getbuf().append(('NetSetSaveInfo', get_save(), -1, 0))
     elif type == 'NetUpgrade':
         pass
         # data_json = json.loads(data)
@@ -172,6 +175,12 @@ def get_save():
     to_dump = dict()
     to_dump['SaveInfoList'] = saves
     return json.dumps(to_dump)
+
+
+def delete_save(name):
+    file_path = os.path.join('./Saving', name)
+    if os.path.exists(file_path):
+        os.remove(file_path)
 
 
 def generate_message(str):
