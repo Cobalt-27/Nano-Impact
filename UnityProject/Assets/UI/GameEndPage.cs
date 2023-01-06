@@ -15,8 +15,8 @@ namespace Nano
         private GameObject panel;
         public static GameEndPage Instance{get;private set;}
         public static readonly string PanelEnable = "enable";
-        public static readonly string WinMessage = "You Win :)";
-        public static readonly string LoseMessage = "You Lose :(";
+        // public static readonly string WinMessage = "You Win :)";
+        // public static readonly string LoseMessage = "You Lose :(";
         public static readonly string EndSubtitle="Left click to continue";
         // Start is called before the first frame update
         void Start()
@@ -49,14 +49,7 @@ namespace Nano
             print($"Game end page winning={win}");
             SetActive(true);
             SetSubTitle(EndSubtitle);
-            if (Main.Instance.GameMode == GameMode.Singleplay)
-            {
-                SetTitle($"{win.ToString()} Wins!");
-            }
-            else
-            {
-                SetTitle(win == Main.Instance.MyFaction ? WinMessage : LoseMessage);
-            }
+            SetTitle($"{win.ToString()} Wins!");
         }
         
     }
