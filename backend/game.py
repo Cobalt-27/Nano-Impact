@@ -174,12 +174,24 @@ class Game:
         self.send(OperationType.ServerSetMap.value, json.dumps(self.map.package()))
 
     def set_unit(self, units):  # TODO: 读档
+        if os.path.exists("Level"):
+            with open("Level", 'r') as f:
+                read = f.read()
+        else:
+            with open("Level", 'w') as f:
+                f.write("111111")
+            read = "111111"
+
+        index = 0
         self.units = {}
         for i in units["Units"]:
             a = NetUnit(i["ID"], i["Character"], i["Faction"], i["Strength"], i["Defence"], i["Life"], i["Range"],
                         i["Speed"], i["Type"], i["Row"], i["Col"], i["RelicID"], i["CanMove"], i["CanAttack"],
                         i["Exp"], i["Level"])
             self.units[a.ID] = a
+            self.units[a.ID].Level = int(read[index])
+            self.LevelUp(self.units[a.ID], int(read[index]) - 1)
+            index += 1
         self.send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"))
 
     def set_building(self, buildings):
@@ -282,9 +294,38 @@ class Game:
                 b = False
 
         if a is True:
+            self.write_Level()
             return self.send(OperationType.ServerEndGame.value, json.dumps({"content": "Blue"}))
         if b is True:
+            self.write_Level()
             return self.send(OperationType.ServerEndGame.value, json.dumps({"content": "Red"}))
+
+    def write_Level(self):
+        with open("Level", 'w') as f:
+            if "C1" in self.units:
+                f.write(str(self.units["C1"].Level))
+            else:
+                f.write("1")
+            if "C2" in self.units:
+                f.write(str(self.units["C2"].Level))
+            else:
+                f.write("1")
+            if "C3" in self.units:
+                f.write(str(self.units["C3"].Level))
+            else:
+                f.write("1")
+            if "C4" in self.units:
+                f.write(str(self.units["C4"].Level))
+            else:
+                f.write("1")
+            if "C5" in self.units:
+                f.write(str(self.units["C5"].Level))
+            else:
+                f.write("1")
+            if "C6" in self.units:
+                f.write(str(self.units["C6"].Level))
+            else:
+                f.write("1")
 
     def JudgeEndRound(self):
         my = []
@@ -390,6 +431,7 @@ class Game:
         for i in self.units:
             if (self.units[i].Row - self.buildings["B1"].Row) ** 2 + \
                     (self.units[i].Col - self.buildings["B1"].Col) ** 2 <= 4:
+                self.units[i].Level += 1
                 self.LevelUp(unit=self.units[i], value=1)
                 self.pop_message("Level + 1", self.units[i].Row, self.units[i].Col)
             if (self.units[i].Row - self.buildings["B2"].Row) ** 2 + \
@@ -544,8 +586,10 @@ class Game:
 if __name__ == '__main__':
     g = Game()
     g.restart("3v3")
-    g.enable_ai = False
-    g.handle_interact("C1", "C2")
+    g.handle_endRound()
+    g.handle_endRound()
+
+    g.write_Level()
 
     for i in g.toSend:
         print(i[0], ">", i[1], i[2], i[3])
