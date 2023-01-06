@@ -143,6 +143,7 @@ namespace Nano
                 {
                     if(Input.GetKeyDown(KeyCode.Escape)){
                         NetSend(new NetQuit());
+                        GameSceneSetActive(false);
                     }
                     if (Input.GetKeyDown(KeyCode.Delete))
                     {
