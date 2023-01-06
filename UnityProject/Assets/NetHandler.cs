@@ -70,12 +70,19 @@ namespace Nano
                     ClearSupervised();
                     break;
                 case "ClientShow":
-                    var fac=To<ClientShow>(json).Content;
-                    string msg=null;
-                    if(fac==Main.Instance.MyFaction.ToString())
-                        msg=$"Yours ({fac})";
+                    var fac = To<ClientShow>(json).Content;
+                    string msg = null;
+                    if (Main.Instance.GameMode == GameMode.Singleplay)
+                    {
+                        msg = fac;
+                    }
                     else
-                        msg=$"Opponent {fac}";
+                    {
+                        if (fac == Main.Instance.MyFaction.ToString())
+                            msg = $"Yours ({fac})";
+                        else
+                            msg = $"Opponent {fac}";
+                    }
                     UIController.Instance.SetNetBar(msg);
                     break;
                 case "NetPlayAttack":
@@ -92,8 +99,8 @@ namespace Nano
                     print($"Game start, mode={start.Mode}, faction={start.Faction}");
                     break;
                 case "PopMessage":
-                    var data=To<PopMessage>(json);
-                    UIController.Instance.PopMessage(data.Row,data.Col,data.Content);
+                    var data = To<PopMessage>(json);
+                    UIController.Instance.PopMessage(data.Row, data.Col, data.Content);
                     break;
                 default:
                     return;
