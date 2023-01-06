@@ -559,7 +559,7 @@ class Game:
         for ID in self.units:
             if row == self.units[ID].Row and col == self.units[ID].Col:
                 return False
-            if row >= 10 or row < 0 or col >= 10 or col < 0:
+            if row >= len(self.map.blocks) or row < 0 or col >= len(self.map.blocks) or col < 0:
                 return False
 
         return True
