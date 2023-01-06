@@ -9,7 +9,7 @@ namespace Nano
         [SerializeField]
         private float speed = 0.05f;
         [SerializeField]
-        private int lifeSpan = 600;
+        private int destroyWhenBelow = 600;
         public bool Enabled = true;
         // Start is called before the first frame update
         void Start()
@@ -23,9 +23,7 @@ namespace Nano
             if (Enabled)
             {
                 gameObject.transform.Translate(new Vector3(0, -speed, 0));
-                lifeSpan--;
-                if (lifeSpan <= 0)
-                {
+                if(gameObject.transform.position.y<destroyWhenBelow){
                     Destroy(gameObject);
                 }
             }
