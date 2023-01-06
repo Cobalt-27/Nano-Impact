@@ -92,7 +92,7 @@ async def handle(ws: WebSocketServerProtocol, type, data):
             cur_index = 0
         # print(cur_index)
         # print(c.index)
-        if c is None or (type not in ['NetGreet', 'NetStartGame', 'NetRemoveSave'] and c.index != cur_index):
+        if c is None or (type not in ['NetGreet', 'NetStartGame', 'NetRemoveSave', 'NetRollback', 'NetSave'] and c.index != cur_index):
             print(f'Unsupported {type} command from opposite')
             return
     else:
