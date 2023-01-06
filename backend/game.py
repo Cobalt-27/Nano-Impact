@@ -586,11 +586,10 @@ class Game:
 
 if __name__ == '__main__':
     g = Game()
-    g.restart("big")
-    g.handle_endRound()
+    g.restart("3v3")
+    g.enable_ai = False
     g.handle_endRound()
 
-    g.write_Level()
 
     for i in g.toSend:
         print(i[0], ">", i[1], i[2], i[3])
