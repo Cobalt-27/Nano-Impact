@@ -152,11 +152,9 @@ async def handle(ws: WebSocketServerProtocol, type, data):
             send_client = search_client(target)
             if send_client is not None:
                 await send(search_client(target).ws, type, content)
-        # if type == 'ServerEndGame':
-        #     for c in clients:
-        #         print(f'close socket with {c.addr} because reconnect')
-        #         await c.ws.close()
-        #     clients = []
+        if type == 'ServerEndGame':
+            game = Game()
+            clients = []
     print('handle end')
     # for ws in clients:
     #     await send(clients[ws], type, content)
