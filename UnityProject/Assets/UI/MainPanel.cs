@@ -6,12 +6,14 @@ namespace Nano
     public class MainPanel : MonoBehaviour
     {
         private Animator animator=>gameObject.GetComponent<Animator>();
+        [SerializeField]
+        private GameObject panel;
         
         // Start is called before the first frame update
         void Start()
         {
             animator.SetBool("MainClose", true);
-            gameObject.SetActive(false);
+            panel.SetActive(false);
         }
 
         // Update is called once per frame
@@ -21,7 +23,7 @@ namespace Nano
             {
                 var closed=animator.GetBool("MainClose");
                 animator.SetBool("MainClose", !closed);
-                gameObject.SetActive(!closed);
+                panel.SetActive(!closed);
             }
         }
     }
