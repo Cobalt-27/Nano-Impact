@@ -405,6 +405,7 @@ class Game:
             character = json.loads(read[0])
             self.player = bool(read[1])
             self.set_unit(character)
+        self.handle_show()
 
     def handle_endRound(self, AI=False):
         self.player = not self.player  # TODO: 交换阵营
