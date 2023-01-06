@@ -278,7 +278,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 0.1
-  lifeSpan: 1800
+  destroyWhenBelow: 0
   Enabled: 1
 --- !u!1 &6254238019696792391
 GameObject:

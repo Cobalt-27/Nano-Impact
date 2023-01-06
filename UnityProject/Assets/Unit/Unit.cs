@@ -116,7 +116,7 @@ namespace Nano
         };
         public void SetStatUI(){
              var leftNames = new List<string>{
-                $"Level:{Strength}",
+                $"Attack:{Strength}",
                 $"Life:{Life}",
                 $"Range:{Range}",
                 $"Speed:{Speed}",

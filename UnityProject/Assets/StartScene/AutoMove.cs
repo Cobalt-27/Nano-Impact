@@ -9,7 +9,7 @@ namespace Nano
         [SerializeField]
         private float speed = 0.05f;
         [SerializeField]
-        private int destroyWhenBelow = 600;
+        private int destroyWhenBelow = 0;
         public bool Enabled = true;
         // Start is called before the first frame update
         void Start()
