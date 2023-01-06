@@ -139,12 +139,9 @@ namespace Nano
             }
             if (Connected)
             {
-                if (BoardState == KeyBoardState.Game&&gameStart)
+                if (BoardState == KeyBoardState.Game && gameStart)
                 {
-                    if(Input.GetKeyDown(KeyCode.Escape)){
-                        NetSend(new NetQuit());
-                        GameSceneSetActive(false);
-                    }
+
                     if (Input.GetKeyDown(KeyCode.Delete))
                     {
                         NetSend(new NetEndRound());
@@ -155,8 +152,19 @@ namespace Nano
                     }
                 }
             }
-            if(!gameStart){
-                if(Input.GetKeyDown(KeyCode.LeftAlt)){
+            if (gameStart)
+            {
+                if (Input.GetKeyDown(KeyCode.Escape))
+                {
+                    if(Connected)
+                        NetSend(new NetQuit());
+                    GameSceneSetActive(false);
+                }
+            }
+            if (!gameStart)
+            {
+                if (Input.GetKeyDown(KeyCode.LeftAlt))
+                {
                     Application.Quit();
                 }
             }

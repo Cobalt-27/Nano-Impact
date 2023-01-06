@@ -40,7 +40,7 @@ namespace Nano
     }
     public class ServerStartGame : INetMessage
     {
-        public GameMode Mode;
+        public GameMode GameMode;
         public Faction Faction;//invalid if singleplay
     }
     public class ServerEndGame : INetMessage

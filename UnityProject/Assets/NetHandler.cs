@@ -95,8 +95,8 @@ namespace Nano
                     Main.Instance.GameSceneSetActive(true);
                     var start = To<ServerStartGame>(json);
                     Main.Instance.MyFaction = start.Faction;
-                    Main.Instance.GameMode = start.Mode;
-                    print($"Game start, mode={start.Mode}, faction={start.Faction}");
+                    Main.Instance.GameMode = start.GameMode;
+                    print($"Game start, mode={start.GameMode}, faction={start.Faction}");
                     break;
                 case "PopMessage":
                     var data = To<PopMessage>(json);
