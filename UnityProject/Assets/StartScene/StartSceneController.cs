@@ -61,6 +61,11 @@ namespace Nano
                     Load = true,
                 });
             }
+            if(Input.GetKeyDown(KeyCode.Delete)&&selected!=null){
+                Main.Instance.NetSend<NetRemovesave>(new NetRemovesave{
+                    Name=selected.Name
+                });
+            }
             var name = selected == null ? "..." : (Input.GetKey(KeyCode.UpArrow)?selected.Description:selected.Name);
             infoName.GetComponent<TextMeshProUGUI>().text = name;
         }
