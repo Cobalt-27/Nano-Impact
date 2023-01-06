@@ -6,12 +6,12 @@ import websockets
 import asyncio
 import random
 from game import Game
+import argparse
 
 from websockets.server import WebSocketServerProtocol
 
 game = Game()
 clients = []
-multiplayer = False
 
 
 class ClientInfo:
@@ -111,7 +111,7 @@ async def handle(ws: WebSocketServerProtocol, type, data):
                 return
     if type == 'NetStartGame':
         game = Game()
-        if d['SaveName'].endswith('.ai'):
+        if d['SaveName'].endswith('.ai') and not multiplayer:
             game.enable_ai = True
         else:
             game.enable_ai = False
@@ -154,11 +154,12 @@ async def handle(ws: WebSocketServerProtocol, type, data):
         #         await c.ws.close()
         #     clients = []
     print('handle end')
-        # for ws in clients:
-        #     await send(clients[ws], type, content)
+    # for ws in clients:
+    #     await send(clients[ws], type, content)
 
 
 def get_save():
+    print(multiplayer)
     if not os.path.exists('./Saving'):
         os.makedirs('./Saving')
     saves = []
@@ -180,6 +181,13 @@ def generate_message(str):
 
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--multiplayer', '-m', type=int, default=False, help='enable multiplayer')
+    args = parser.parse_args()
+    multiplayer = args.multiplayer == 1
+    # print(args)
+    if multiplayer:
+        print('Multiplayer Enabled')
     if not os.path.exists('./RollBack'):
         os.makedirs('./RollBack')
     # print(get_save())
