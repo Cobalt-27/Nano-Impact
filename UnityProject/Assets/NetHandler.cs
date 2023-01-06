@@ -137,6 +137,7 @@ namespace Nano
         {
             var empty = new List<string>();
             Remove(Main.UnitTag, empty);
+            Remove(Main.BuildingTag,empty);
             // Remove(Main.bui)
         }
         private void OnSetUnits(ServerSetUnits args)
