@@ -121,6 +121,7 @@ namespace Nano
                 $"Range:{Range}",
                 $"Speed:{Speed}",
                 $"Level:{Level}",
+                $"Defence:{Defence}",
             };
             var leftValues = new List<float>{
                 Strength/50f,
@@ -128,6 +129,7 @@ namespace Nano
                 Range/15f,
                 Speed/15f,
                 Level/15f,
+                Defence/15f,
             };
             var rightNames = new List<string>{
                 $"Relic: {RelicVerbose(RelicID)}",
