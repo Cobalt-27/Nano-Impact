@@ -42,7 +42,6 @@ namespace Nano
         }
         private void SetActive(bool active)
         {
-            panel.SetActive(active);
             panel.GetComponent<Animator>().SetBool(PanelEnable, active);
         }
         public void ShowGameEnd(Faction win)
