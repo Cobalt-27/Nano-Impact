@@ -198,6 +198,8 @@ class Game:
         self.send(OperationType.ServerSetRelics.value, self.package_list(self.relics, "Relics"))
 
     def handle_interact(self, From: str, To: str, AI=False):  # 交互
+        if From not in self.units or To not in self.units:
+            return
         attacker = self.units[From]
         defender = self.units[To]
         if (attacker.Row - defender.Row) ** 2 + (attacker.Col - defender.Col) ** 2 <= attacker.Range ** 2 \
@@ -263,7 +265,10 @@ class Game:
                   json.dumps({"Row": Row, "Col": Col, "Content": message}), -1, 1)
 
     def LevelUp(self, unit, value):
-        unit.Strength += value
+        if unit.Strength > 0:
+            unit.Strength += value
+        else:
+            unit.Strength -= value
         unit.Defence += value
         unit.Life += value
 
@@ -333,7 +338,10 @@ class Game:
             self.send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"))
 
     def assignRelicValue(self, unit, type):
-        unit.Strength += type.value["Strength"]
+        if unit.Strength > 0:
+            unit.Strength += type.value["Strength"]
+        else:
+            unit.Strength -= type.value["Strength"]
         unit.Defence += type.value["Defence"]
         unit.Life += type.value["Life"]
         unit.Range += type.value["Range"]
@@ -535,9 +543,9 @@ class Game:
 
 if __name__ == '__main__':
     g = Game()
-    g.restart("player-to-player")
-    g.handle_endRound()
-    g.handle_endRound()
+    g.restart("3v3")
+    g.enable_ai = False
+    g.handle_interact("C1", "C2")
 
     for i in g.toSend:
         print(i[0], ">", i[1], i[2], i[3])
