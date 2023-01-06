@@ -137,6 +137,7 @@ async def handle(ws: WebSocketServerProtocol, type, data):
         game.handle_addBuilding(d['Type'], d['Row'], d['Col'])
     elif type == 'NetSave':
         game.handle_save(d['Name'])
+        game.getbuf().append(('NetSetSaveInfo', get_save(), -1, 0))
     elif type == 'NetQuit':
         game.handle_quit()
     elif type == 'NetRollback':
