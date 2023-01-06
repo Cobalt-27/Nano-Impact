@@ -504,8 +504,10 @@ class Game:
 
     def handle_quit(self):
         if self.player:
+            self.write_Level()
             self.send(OperationType.ServerEndGame.value, json.dumps({"Winner": "Red"}))
         else:
+            self.write_Level()
             self.send(OperationType.ServerEndGame.value, json.dumps({"Winner": "Blue"}))
 
     def package_list(self, data, type=None):
