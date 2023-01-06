@@ -201,7 +201,8 @@ class Game:
         attacker = self.units[From]
         defender = self.units[To]
         if (attacker.Row - defender.Row) ** 2 + (attacker.Col - defender.Col) ** 2 <= attacker.Range ** 2 \
-                and attacker.CanAttack and self.checkFaction(attacker) and not self.checkFaction(defender):
+                and attacker.CanAttack and self.checkFaction(attacker) and not self.checkFaction(defender) and \
+                attacker.Strength > 0:
             attacker.CanAttack = False
             type = 0
             if self.map.blocks[attacker.Row][attacker.Col].Type < 3:
@@ -223,6 +224,26 @@ class Game:
                 attacker.Level += defender.Level
                 self.LevelUp(attacker, defender.Level)
 
+            self.record_for_rollback()
+
+            if not AI:
+                print("player", "attack")
+                self.send(OperationType.NetPlayAttack.value, json.dumps({"ID": From}), -1, 0)
+                self.send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"))
+                self.JudgeEndRound()
+            else:
+                print("AI", "attack")
+                self.send(OperationType.NetPlayAttack.value, json.dumps({"ID": From}), -1, 1)
+                self.send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"), -1, 1)
+
+            self.JudegeEnd()
+
+        if (attacker.Row - defender.Row) ** 2 + (attacker.Col - defender.Col) ** 2 <= attacker.Range ** 2 \
+                and attacker.CanAttack and self.checkFaction(attacker) and self.checkFaction(defender) and \
+                attacker.Strength < 0:
+            attacker.CanAttack = False
+            defender.Life += abs(attacker.Strength)
+            self.pop_message("+" + str(abs(attacker.Strength)), defender.Row, defender.Col)
             self.record_for_rollback()
 
             if not AI:
@@ -507,7 +528,7 @@ class Game:
 
 if __name__ == '__main__':
     g = Game()
-    g.restart("default")
+    g.restart("player-to-player")
     g.enable_ai = False
     g.handle_move("C1", 2, 2)
     g.handle_interact("C1", "C2")
