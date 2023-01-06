@@ -586,7 +586,7 @@ class Game:
 
 if __name__ == '__main__':
     g = Game()
-    g.restart("3v3")
+    g.restart("big")
     g.handle_endRound()
     g.handle_endRound()
 
