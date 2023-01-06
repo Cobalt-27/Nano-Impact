@@ -156,7 +156,7 @@ namespace Nano
                 }
             }
             if(!gameStart){
-                if(Input.GetKeyDown(KeyCode.Escape)){
+                if(Input.GetKeyDown(KeyCode.LeftAlt)){
                     Application.Quit();
                 }
             }

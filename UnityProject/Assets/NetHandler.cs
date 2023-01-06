@@ -70,7 +70,13 @@ namespace Nano
                     ClearSupervised();
                     break;
                 case "ClientShow":
-                    UIController.Instance.SetNetBar(To<ClientShow>(json).Content);
+                    var fac=To<ClientShow>(json).Content;
+                    string msg=null;
+                    if(fac==Main.Instance.MyFaction.ToString())
+                        msg=$"Yours ({fac})";
+                    else
+                        msg=$"Opponent {fac}";
+                    UIController.Instance.SetNetBar(msg);
                     break;
                 case "NetPlayAttack":
                     OnAttack(To<NetPlayAttack>(json).ID);

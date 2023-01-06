@@ -62,7 +62,7 @@ namespace Nano
                 });
             }
             if(Input.GetKeyDown(KeyCode.Delete)&&selected!=null){
-                Main.Instance.NetSend<NetRemovesave>(new NetRemovesave{
+                Main.Instance.NetSend<NetRemoveSave>(new NetRemoveSave{
                     Name=selected.Name
                 });
             }

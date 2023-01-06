@@ -31,7 +31,7 @@ namespace Nano
         [SerializeField]
         private float yOffset = 2.6f;
         [SerializeField]
-        private float speed = 0.1f;
+        private float speed = 0.2f;
 
         private readonly string animSelected = "touch";
         private readonly string animMove = "move";
@@ -120,12 +120,14 @@ namespace Nano
                 $"Life:{Life}",
                 $"Range:{Range}",
                 $"Speed:{Speed}",
+                $"Level:{Level}",
             };
             var leftValues = new List<float>{
                 Strength/50f,
                 Life/100f,
                 Range/15f,
                 Speed/15f,
+                Level/15f,
             };
             var rightNames = new List<string>{
                 $"Relic: {RelicVerbose(RelicID)}",

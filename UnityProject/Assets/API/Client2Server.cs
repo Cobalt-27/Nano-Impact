@@ -50,7 +50,7 @@ namespace Nano
     {
         public string Name;
     }
-    class NetRemovesave : INetMessage
+    class NetRemoveSave : INetMessage
     {
         public string Name;
     }
