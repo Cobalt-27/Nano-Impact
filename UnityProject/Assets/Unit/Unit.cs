@@ -121,7 +121,7 @@ namespace Nano
                 $"Range:{Range}",
                 $"Speed:{Speed}",
                 $"Level:{Level}",
-                $"Defence:{Defence}",
+                $"DEF:{Defence}",
             };
             var leftValues = new List<float>{
                 Strength/50f,
