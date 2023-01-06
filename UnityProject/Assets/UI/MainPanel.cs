@@ -11,6 +11,7 @@ namespace Nano
         void Start()
         {
             animator.SetBool("MainClose", true);
+            gameObject.SetActive(false);
         }
 
         // Update is called once per frame
@@ -18,7 +19,9 @@ namespace Nano
         {
             if (Input.GetKeyDown(KeyCode.Tab))
             {
-                animator.SetBool("MainClose", !animator.GetBool("MainClose"));
+                var closed=animator.GetBool("MainClose");
+                animator.SetBool("MainClose", !closed);
+                gameObject.SetActive(!closed);
             }
         }
     }
