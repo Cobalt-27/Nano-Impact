@@ -11,7 +11,7 @@ from websockets.server import WebSocketServerProtocol
 
 game = Game()
 clients = []
-multiplayer = True
+multiplayer = False
 
 
 class ClientInfo:

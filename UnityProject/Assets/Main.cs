@@ -139,7 +139,7 @@ namespace Nano
             }
             if (Connected)
             {
-                if (BoardState == KeyBoardState.Game)
+                if (BoardState == KeyBoardState.Game&&gameStart)
                 {
                     if(Input.GetKeyDown(KeyCode.Escape)){
                         NetSend(new NetQuit());
@@ -152,6 +152,11 @@ namespace Nano
                     {
                         NetSend(new NetRollback());
                     }
+                }
+            }
+            if(!gameStart){
+                if(Input.GetKeyDown(KeyCode.Escape)){
+                    Application.Quit();
                 }
             }
         }
