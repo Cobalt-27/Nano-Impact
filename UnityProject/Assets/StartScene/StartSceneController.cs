@@ -9,10 +9,7 @@ namespace Nano
     public class StartSceneController : MonoBehaviour
     {
         public static StartSceneController Instance;
-        [SerializeField]
-        private GameObject block;
-        [SerializeField]
-        private int interval = 120;
+
         [SerializeField]
         private GameObject input;
         [SerializeField]
@@ -80,13 +77,6 @@ namespace Nano
             }
         }
 
-        void FixedUpdate()
-        {
-            counter++;
-            if (counter % interval == 0)
-            {
-                Instantiate(block, gameObject.transform.position, Quaternion.identity);
-            }
-        }
+
     }
 }
