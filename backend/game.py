@@ -149,7 +149,6 @@ class Game:
         self.units = {}
         self.buildings = {}
         self.relics = {}
-        self.map = {}
         self.player = True
         self.toSend = []
         self.step = 0
