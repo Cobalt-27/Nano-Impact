@@ -293,7 +293,7 @@ class Game:
             if unit.CanMove:
                 return
             else:
-                if unit.CanAttack and self.attack_valid(unit, op):
+                if unit.CanAttack and self.attack_valid(unit, op, my):
                     return
         self.handle_endRound()
 
@@ -433,7 +433,8 @@ class Game:
         self.send(OperationType.ServerSetUnits.value, self.package_list(self.units, "Units"), target=index)
         self.send(OperationType.ServerSetBuildings.value, self.package_list(self.buildings, "Buildings"), target=index)
         self.send(OperationType.ServerSetRelics.value, self.package_list(self.relics, "Relics"), target=index)
-        self.send(OperationType.ServerStartGame.value, json.dumps({"Faction": color, "GameMode": "Multiplay"}), target=index)
+        self.send(OperationType.ServerStartGame.value, json.dumps({"Faction": color, "GameMode": "Multiplay"}),
+                  target=index)
         self.handle_show()
 
     def handle_client_save(self, Name):
@@ -486,17 +487,23 @@ class Game:
                 move_y += 1
             if self.move_valid(move_x, move_y):
                 self.handle_move(u_my.ID, int(move_x), int(move_y), True)
-            defender = self.attack_valid(u_my, op)
+            defender = self.attack_valid(u_my, op, my)
             if defender is not None:
                 self.handle_interact(u_my.ID, defender.ID, True)
 
         self.handle_endRound(True)
 
-    def attack_valid(self, my, ops):
-        for op in ops:
-            if (op.Row - my.Row) ** 2 + (op.Col - my.Col) ** 2 <= my.Range ** 2:
-                return op
-        return None
+    def attack_valid(self, my, ops, mys):
+        if my.Strength > 0:
+            for op in ops:
+                if (op.Row - my.Row) ** 2 + (op.Col - my.Col) ** 2 <= my.Range ** 2:
+                    return op
+            return None
+        else:
+            for friend in mys:
+                if (friend.Row - my.Row) ** 2 + (friend.Col - my.Col) ** 2 <= my.Range ** 2:
+                    return friend
+            return None
 
     def move_valid(self, row, col):
         for ID in self.units:
@@ -529,9 +536,8 @@ class Game:
 if __name__ == '__main__':
     g = Game()
     g.restart("player-to-player")
-    g.enable_ai = False
-    g.handle_move("C1", 2, 2)
-    g.handle_interact("C1", "C2")
+    g.handle_endRound()
+    g.handle_endRound()
 
     for i in g.toSend:
         print(i[0], ">", i[1], i[2], i[3])
