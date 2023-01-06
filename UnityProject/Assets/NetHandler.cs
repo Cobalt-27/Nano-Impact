@@ -72,17 +72,7 @@ namespace Nano
                 case "ClientShow":
                     var fac = To<ClientShow>(json).Content;
                     string msg = null;
-                    if (Main.Instance.GameMode == GameMode.Singleplay)
-                    {
-                        msg = fac;
-                    }
-                    else
-                    {
-                        if (fac == Main.Instance.MyFaction.ToString())
-                            msg = $"Yours ({fac})";
-                        else
-                            msg = $"Opponent {fac}";
-                    }
+                    msg = fac;
                     UIController.Instance.SetNetBar(msg);
                     break;
                 case "NetPlayAttack":
