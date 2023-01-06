@@ -3060,6 +3060,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7327524377830094713, guid: ca8503961d2a4a940834ebeafd920f23,
         type: 3}
+      propertyPath: m_Transition
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7327524377830094713, guid: ca8503961d2a4a940834ebeafd920f23,
+        type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1222048501}
@@ -3294,6 +3299,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Relic1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7327524377830094713, guid: ca8503961d2a4a940834ebeafd920f23,
+        type: 3}
+      propertyPath: m_Transition
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7327524377830094713, guid: ca8503961d2a4a940834ebeafd920f23,
         type: 3}
@@ -7575,6 +7585,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Relic
+      objectReference: {fileID: 0}
+    - target: {fileID: 7327524377830094713, guid: ca8503961d2a4a940834ebeafd920f23,
+        type: 3}
+      propertyPath: m_Transition
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7327524377830094713, guid: ca8503961d2a4a940834ebeafd920f23,
         type: 3}
