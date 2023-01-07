@@ -37,6 +37,8 @@ async def send(ws, type: str, data: str):
 
 async def nethandle(websocket: WebSocketServerProtocol, path):
     try:
+        addr = websocket.remote_address
+        print(f'Connection started with {addr}')
         async for message in websocket:
             idx = message.find('@')
             type = message[0:idx]
@@ -46,7 +48,8 @@ async def nethandle(websocket: WebSocketServerProtocol, path):
             await handle(websocket, type, data)
     except websockets.ConnectionClosedError:
         print(f'Connection closed with {websocket.remote_address}')
-        clients.remove(search_client(websocket.remote_address))
+        disconnected = search_client(websocket.remote_address)
+        clients.remove(disconnected)
     # except Exception as e:
     #     print(repr(e))
     # print('connection closed')
@@ -154,7 +157,7 @@ async def handle(ws: WebSocketServerProtocol, type, data):
                 await send(search_client(target).ws, type, content)
         if type == 'ServerEndGame':
             game = Game()
-            clients = []
+            # clients = []
     print('handle end')
     # for ws in clients:
     #     await send(clients[ws], type, content)
